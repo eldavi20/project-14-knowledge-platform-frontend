@@ -1,6 +1,6 @@
-# Project 14 — Knowledge Platform Frontend
+# Project 14 - Knowledge Platform Frontend
 
-**SER401 — Software Engineering Project**
+**SER401 - Software Engineering Project**
 
 A web-based knowledge platform designed to organize, manage, search, and retrieve knowledge. The project will eventually incorporate AI-powered retrieval and permission-aware access control.
 
@@ -15,12 +15,31 @@ The Next.js frontend application for the knowledge platform project. Built with 
 
 ## Two Repositories
 
-- **Frontend: this repo** `[project-14-frontend](https://github.com/eldavi20/project-14-knowledge-platform-frontend)` — Next.js + shadcn/ui, hosted on Vercel
-- **Backend:** (`[project-14-knowledge-platform](https://github.com/lanaghanim/project-14-knowledge-platform)`) — FastAPI + Supabase + Pinecone, Docker container
+- **Frontend:** [`this repository`](https://github.com/eldavi20/project-14-knowledge-platform-frontend) - Built with Next.js, TypeScript, and Tailwind CSS, hosted on Vercel
+- **Backend:** [`project-14-backend`](https://github.com/lanaghanim/project-14-knowledge-platform) - Built with FastAPI, Supabase, and Pinecone; Docker container
 
 Team chat lives on **Discord**. Content sources are **Google Drive and Discord**.
 
-The backend lives in the separate `[project-14-knowledge-platform](https://github.com/lanaghanim/project-14-knowledge-platform)` repo (FastAPI + Supabase + Pinecone, Docker container).
+## Project Structure
+
+```text
+```
+
+## System Architecture & Integration Flow
+
+The system is split into two independent repositories that communicate using REST APIs and shared authentication.
+
+The backend lives in the separate [`project-14-backend`](https://github.com/lanaghanim/project-14-knowledge-platform) repository.
+
+1. **Authentication:**
+   - Handled directly via Supabase Auth.
+   - The frontend authenticates users directly; requests passed to the backend include Supabase session tokens for server-side validation and group membership lookup.
+2. **API Communication:**
+   - HTTP requests are sent from the Next.js frontend (running locally or deployed on Vercel) to the FastAPI backend.
+   - The frontend must be configured with the appropriate backend URL environment variable, and the backend must allow requests via CORS, due to separate hosting.
+3. **Security:**
+   - The system enforces retrieval-time filtering through the `SecureRetriever` component.
+   - Authorized queries pass through the `SecureRetriever` component to enforce permissions before querying Pinecone or interactions with the LLM.
 
 ## Requirements
 

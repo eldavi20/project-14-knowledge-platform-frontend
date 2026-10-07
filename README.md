@@ -11,7 +11,9 @@ The Next.js frontend application for the knowledge platform project. Built with 
 - **Framework:** [Next.js](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** `shadcn/ui` (Base UI library, Vega preset)
 - **Deployment:** [Vercel](https://vercel.com/)
+- **Authentication & Backend Integration:** Integrated via Supabase with the FastAPI backend boundary (`SecureRetriever`).
 
 ## Two Repositories
 
@@ -69,7 +71,8 @@ The backend lives in the separate [`project-14-knowledge-platform`](https://gith
 Make sure the following are installed on your local machine:
 
 - **Node.js** (Version `>=20.9.0` recommended)
-- **npm**
+   - Managed via `nvm`
+- **Package Manager:** `npm`
 
 ---
 
@@ -85,7 +88,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ## Local Setup Instructions
 
-Clone the repository:
+Clone the repository and navigate to the frontend directory:
 
 ```bash
 git clone https://github.com/eldavi20/project-14-knowledge-platform-frontend.git
@@ -104,19 +107,21 @@ If you are using an older version, switch to version 20 by running:
 nvm install 20 && nvm use 20
 ```
 
-Install required project packages using npm:
+Install required project packages using `npm`:
 
 ```bash
 npm install
 ```
 
-Create a local environment variables file by copying the example template:
+Configure environment variables:
+
+Create a local environment variables file (`.env.local`) in the root of the frontend directory.
 
 ```bash
 cp .env.example .env.local
 ```
 
-Start the local development server:
+Run the local development server:
 
 ```bash
 npm run dev
@@ -126,10 +131,20 @@ Open `http://localhost:3000` in your browser to view the application.
 
 Any changes made in your `app/` or `components/` directories will reload automatically.
 
+### Adding UI Components
+
+This project uses `shadcn/ui` for UI components.
+
+To add new components to the library:
+
+```bash
+npx shadcn@latest add [component-name] # e.g., card, button, dialog, etc.
+```
+
 ### Deployment
 
 This repository is continuously deployed to Vercel on every push to the `main` branch.
 
-- **Live Deployment URL:** (project-14-knowledge-platform-front.vercel.app)
+- **Live Deployment URL:** [project-14-knowledge-platform-front.vercel.app](https://project-14-knowledge-platform-front.vercel.app)
 
 The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.

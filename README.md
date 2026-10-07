@@ -16,20 +16,43 @@ The Next.js frontend application for the knowledge platform project. Built with 
 ## Two Repositories
 
 - **Frontend:** [`this repository`](https://github.com/eldavi20/project-14-knowledge-platform-frontend) - Built with Next.js, TypeScript, and Tailwind CSS, hosted on Vercel
-- **Backend:** [`project-14-backend`](https://github.com/lanaghanim/project-14-knowledge-platform) - Built with FastAPI, Supabase, and Pinecone; Docker container
+- **Backend:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) - Built with FastAPI, Supabase, and Pinecone; Docker container
 
 Team chat lives on **Discord**. Content sources are **Google Drive and Discord**.
 
 ## Project Structure
 
 ```text
+project-14-knowledge-platform-frontend/   ← frontend repo (this repo)
+│
+├── app/                  ← Next.js App Router (pages, layouts, and routing)
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/           ← Reusable UI components (shadcn/ui integration)
+│   └── ui/
+│
+├── lib/                  ← Utility functions and API client wrappers
+│
+├── public/               ← Static assets (images, icons)
+│
+├── .env.example
+├── .env.local
+├── .gitignore
+├── next.config.ts
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── README.md
 ```
 
 ## System Architecture & Integration Flow
 
 The system is split into two independent repositories that communicate using REST APIs and shared authentication.
 
-The backend lives in the separate [`project-14-backend`](https://github.com/lanaghanim/project-14-knowledge-platform) repository.
+The backend lives in the separate [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) repository.
 
 1. **Authentication:**
    - Handled directly via Supabase Auth.
@@ -50,12 +73,22 @@ Make sure the following are installed on your local machine:
 
 ---
 
+## Environment Variables
+
+Create a `.env.local` file in the root directory based on the provided example template (modify once Supabase and backend integration are finalized):
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
 ## Local Setup Instructions
 
 Clone the repository:
 
 ```bash
-git clone [https://github.com/eldavi20/project-14-knowledge-platform-frontend.git](https://github.com/eldavi20/project-14-knowledge-platform-frontend.git)
+git clone https://github.com/eldavi20/project-14-knowledge-platform-frontend.git
 cd project-14-knowledge-platform-frontend
 ```
 
@@ -89,12 +122,14 @@ Start the local development server:
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser to view the application. Any changes made in your `app/` or `components/` directories will reload automatically.
+Open `http://localhost:3000` in your browser to view the application.
+
+Any changes made in your `app/` or `components/` directories will reload automatically.
 
 ### Deployment
 
 This repository is continuously deployed to Vercel on every push to the `main` branch.
 
-- **Live Deployment URL:** project-14-knowledge-platform-front.vercel.app
+- **Live Deployment URL:** (project-14-knowledge-platform-front.vercel.app)
 
 The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.

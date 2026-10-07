@@ -10,14 +10,14 @@ The Next.js frontend application for the knowledge platform project. Built with 
 
 - **Framework:** [Next.js](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) (v4 with CSS-first configuration via `globals.css`)
 - **UI Components:** `shadcn/ui` (Base UI library, Vega preset)
 - **Deployment:** [Vercel](https://vercel.com/)
 - **Authentication & Backend Integration:** Integrated via Supabase with the FastAPI backend boundary (`SecureRetriever`).
 
 ## Two Repositories
 
-- **Frontend:** [`this repository`](https://github.com/eldavi20/project-14-knowledge-platform-frontend) - Built with Next.js, TypeScript, and Tailwind CSS, hosted on Vercel
+- **Frontend:** [`this repository`](https://github.com/eldavi20/project-14-knowledge-platform-frontend) - Built with Next.js, TypeScript, Tailwind CSS v4, and shadcn/ui integration; hosted on Vercel
 - **Backend:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) - Built with FastAPI, Supabase, and Pinecone; Docker container
 
 Team chat lives on **Discord**. Content sources are **Google Drive and Discord**.
@@ -35,8 +35,10 @@ project-14-knowledge-platform-frontend/   ← frontend repo (this repo)
 │
 ├── components/           ← Reusable UI components (shadcn/ui integration)
 │   └── ui/
+│       └── button.tsx
 │
 ├── lib/                  ← Utility functions and API client wrappers
+│   └── utils.ts
 │
 ├── public/               ← Static assets (images, icons)
 │
@@ -45,7 +47,6 @@ project-14-knowledge-platform-frontend/   ← frontend repo (this repo)
 ├── .gitignore
 ├── next.config.ts
 ├── package.json
-├── tailwind.config.ts
 ├── tsconfig.json
 └── README.md
 ```

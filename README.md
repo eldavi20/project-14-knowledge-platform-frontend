@@ -79,13 +79,17 @@ Make sure the following are installed on your local machine:
 
 ## Environment Variables
 
-Create a `.env.local` file in the root directory based on the provided example template (modify once Supabase and backend integration are finalized):
+This project requires a `.env` file in the root directory based on the provided `.env.example` template. 
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-NEXT_PUBLIC_API_URL=http://localhost:8000
+Copy the template file:
+
+```bash
+cp .env.example .env
 ```
+
+Populate the required fields:
+- `NEXT_PUBLIC_SUPABASE_URL`: The Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: The Supabase public anonymous API key.
 
 ## Local Setup Instructions
 
@@ -112,14 +116,6 @@ Install required project packages using `npm`:
 
 ```bash
 npm install
-```
-
-Configure environment variables:
-
-Create a local environment variables file (`.env.local`) in the root of the frontend directory.
-
-```bash
-cp .env.example .env.local
 ```
 
 Run the local development server:

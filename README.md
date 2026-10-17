@@ -145,3 +145,9 @@ This repository is continuously deployed to Vercel on every push to the `main` b
 - **Live Deployment URL:** [project-14-knowledge-platform-front.vercel.app](https://project-14-knowledge-platform-front.vercel.app)
 
 The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.
+
+## Pull Requests
+
+Every PR uses the template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). It includes a summary, a link to the Taiga story, what changed, how to test, screenshots for UI changes, an accessibility checklist, and a final checklist.
+
+Branch names follow `<type>/us-<story>-t-<task>-<short-description>` and commit messages follow Conventional Commits, as defined in the project's pull request process documentation.

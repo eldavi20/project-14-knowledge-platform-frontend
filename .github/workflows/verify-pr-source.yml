@@ -19,6 +19,6 @@ jobs:
             echo "Branch validation passed."
             exit 0
           else
-            echo "❌ Error: Pull requests into 'main' must originate from 'dev' or a 'hotfix/*' branch (found: '$HEAD_REF')."
+            echo "Error: Pull requests into 'main' must originate from 'dev' or a 'hotfix/*' branch (found: '$HEAD_REF')."
             exit 1
           fi

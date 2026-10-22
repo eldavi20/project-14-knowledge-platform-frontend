@@ -92,6 +92,7 @@ function LoginForm() {
           {serverError && (
             <div
               role="alert"
+              data-testid="auth-error-alert"
               className="mb-4 flex items-center gap-2 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
             >
               <AlertCircle className="size-4 shrink-0" />

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -39,7 +40,10 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
+
   const [serverError, setServerError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -58,7 +62,10 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await login(values);
+      const response = await login({
+        ...values,
+        next: nextParam,
+      });
       if (response?.error) {
         setServerError(response.error);
       }
@@ -163,5 +170,24 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="flex min-h-[calc(100vh-4rem)] flex-1 items-center justify-center p-8">
+          <Card className="w-full max-w-sm">
+            <CardHeader>
+              <CardTitle>Sign in</CardTitle>
+              <CardDescription>Loading sign in...</CardDescription>
+            </CardHeader>
+          </Card>
+        </main>
+      }
+    >
+      <LoginForm />
+    </React.Suspense>
   );
 }

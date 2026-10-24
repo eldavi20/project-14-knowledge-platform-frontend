@@ -9,8 +9,14 @@ export type LoginState = {
   success?: boolean
 }
 
+export type LoginPayload = {
+  email: string
+  password: string
+  next?: string | null
+}
+
 export async function login(
-  payload: { email: string; password: string } | FormData
+  payload: LoginPayload | FormData
 ): Promise<LoginState> {
   const email =
     payload instanceof FormData
@@ -20,6 +26,10 @@ export async function login(
     payload instanceof FormData
       ? (payload.get('password') as string)
       : payload.password
+  const nextParam =
+    payload instanceof FormData
+      ? (payload.get('next') as string | null)
+      : payload.next
 
   if (!email || !password) {
     return { error: 'Email and password are required.' }
@@ -36,6 +46,12 @@ export async function login(
     return { error: error.message }
   }
 
+  // Validate and sanitize destination to prevent open redirect vulnerabilities
+  const destination =
+    nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')
+      ? nextParam
+      : '/dashboard'
+
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(destination)
 }

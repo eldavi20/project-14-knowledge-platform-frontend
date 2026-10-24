@@ -96,4 +96,46 @@ test.describe("Authentication and Protected Routes (US-110)", () => {
 
     await context.close();
   });
+
+  test("5. Logout clears session, redirects to /login, and blocks subsequent access to protected routes", async ({
+    page,
+  }) => {
+    // 1. Log in to establish an active session
+    await page.goto("/login");
+    await page.getByLabel("Email").fill(TEST_EMAIL);
+    await page.getByLabel("Password").fill(TEST_PASSWORD);
+    await page.getByRole("button", { name: "Sign in" }).click();
+
+    // 2. Confirm user is on /dashboard with authenticated profile
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+    await expect(page.getByTestId("user-email")).toHaveText(TEST_EMAIL);
+
+    // 3. Click "Log out" button
+    const logoutBtn = page.getByTestId("logout-button");
+    await expect(logoutBtn).toBeVisible();
+    await logoutBtn.click();
+
+    // 4. Verify redirected to /login
+    await expect(page).toHaveURL(/\/login/, { timeout: 15000 });
+    await expect(page.locator('[data-slot="card-title"]')).toHaveText("Sign in");
+
+    // 5. Verify auth cookies are cleared (no active supabase auth token)
+    const cookies = await page.context().cookies();
+    const authCookies = cookies.filter(
+      (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
+    );
+    expect(authCookies.length).toBe(0);
+
+    // 6. Attempt to navigate back to protected /dashboard
+    await page.goto("/dashboard");
+
+    // 7. Verify bounced back to /login with next=/dashboard
+    await expect(page).toHaveURL(/\/login\?next=%2Fdashboard/);
+    await expect(page.locator('[data-slot="card-title"]')).toHaveText("Sign in");
+
+    // 8. Test browser back button behavior
+    await page.goBack();
+    // Verify user cannot see dashboard content
+    await expect(page.getByTestId("user-email")).not.toBeVisible();
+  });
 });

@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { logout } from "@/app/login/actions";
 
 async function UserProfile() {
   const supabase = await createClient();
@@ -26,7 +28,20 @@ async function UserProfile() {
 
   return (
     <div className="max-w-md rounded-lg border bg-card p-6 text-card-foreground shadow-sm space-y-4">
-      <h2 className="text-lg font-semibold">User Profile</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">User Profile</h2>
+        <form action={logout}>
+          <Button
+            variant="outline"
+            size="sm"
+            type="submit"
+            data-testid="logout-button"
+          >
+            Log out
+          </Button>
+        </form>
+      </div>
+
       <div className="space-y-2 text-sm">
         <div className="flex justify-between py-1 border-b">
           <span className="text-muted-foreground">User</span>

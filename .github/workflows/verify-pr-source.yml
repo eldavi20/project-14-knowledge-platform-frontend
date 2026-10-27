@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate Source Branch
+        shell: bash
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          HEAD_REF="${{ github.head_ref }}"
           echo "Source branch: $HEAD_REF"
           
           # Enforce that the source is either 'dev' or matches 'hotfix/*'

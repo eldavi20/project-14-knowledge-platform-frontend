@@ -1,7 +1,9 @@
 # Authentication Flow & Architecture
 
+**Status:** Current as of 27 Oct 2026. This document reflects the live frontend implementation in this repo: login/logout, middleware route guards, dashboard access, and the current signup stub status.
+
 **Stories:** US-74 (Frontend Setup & Login) · US-105 (Employee Signup) · US-110 (Verification, Logout & Docs)  
-**Date:** 24 Oct 2026  
+**Date:** 27 Oct 2026  
 **Purpose:** End-to-end documentation of the frontend authentication lifecycle, session management with Supabase SSR, route protection, containerization, and automated Playwright testing.
 
 ---
@@ -124,6 +126,14 @@ Ensure `.env.local` in `project-14-knowledge-platform-frontend` contains:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-publishable-key>
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+If you run the Playwright auth suite against a specific environment, you can also set:
+
+```bash
+E2E_USER_EMAIL=test@example.com
+E2E_USER_PASSWORD=Password123!
 ```
 
 Test credentials used by automated Playwright E2E suites:

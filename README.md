@@ -1,153 +1,166 @@
 # Project 14 - Knowledge Platform Frontend
 
-**SER401 - Software Engineering Project**
+Frontend for the knowledge platform project. This repository is a Next.js App Router application that provides the browser interface for authentication, protected routes, and the user dashboard experience.
 
-A web-based knowledge platform designed to organize, manage, search, and retrieve knowledge. The project will eventually incorporate AI-powered retrieval and permission-aware access control.
+## Current Status
 
-The Next.js frontend application for the knowledge platform project. Built with Next.js App Router, TypeScript, and Tailwind CSS, this repository serves as the user interface connecting to the FastAPI backend.
+This project is currently in a sprint-ready auth-and-shell phase. The repo contains the working frontend foundation for:
+
+- Supabase-powered login with HTTP-only session cookies
+- Protected routes and redirect handling for authenticated users
+- Dashboard/profile view after sign in
+- Chat and admin route shells
+- Playwright end-to-end authentication testing
+
+The following remain intentionally stubbed or pending backend hookup:
+
+- `/signup` submission is currently a frontend validation stub and does not yet call a registration endpoint
+- chat and admin pages are placeholder shells rather than full knowledge workflows
+- knowledge retrieval, permissions, and document ingestion are not yet wired into this frontend
 
 ## Technology Stack
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)
-- **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) (v4 with CSS-first configuration via `globals.css`)
-- **UI Components:** `shadcn/ui` (Base UI library, Vega preset)
-- **Deployment:** [Vercel](https://vercel.com/)
-- **Authentication & Backend Integration:** Integrated via Supabase with the FastAPI backend boundary (`SecureRetriever`).
+- Framework: [Next.js 16](https://nextjs.org/) (App Router)
+- Runtime: [React 19](https://react.dev/)
+- Language: [TypeScript](https://www.typescriptlang.org/)
+- Styling: [Tailwind CSS](https://tailwindcss.com/)
+- UI: [shadcn/ui](https://ui.shadcn.com/)
+- Auth: [Supabase Auth](https://supabase.com/auth)
+- Testing: [Playwright](https://playwright.dev/)
+- Deployment target: [Vercel](https://vercel.com/)
 
-## Two Repositories
+## Repository Purpose
 
-- **Frontend:** [`this repository`](https://github.com/eldavi20/project-14-knowledge-platform-frontend) - Built with Next.js, TypeScript, Tailwind CSS v4, and shadcn/ui integration; hosted on Vercel
-- **Backend:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) - Built with FastAPI, Supabase, and Pinecone; Docker container
+This repository is the browser-facing part of the platform. It is designed to:
 
-Team chat lives on **Discord**. Content sources are **Google Drive and Discord**.
+- present the app shell and landing page
+- enable secure sign-in and sign-out through Supabase SSR
+- protect authenticated pages and preserve deep links via `?next=` redirects
+- provide a base for future chat, admin, and document-management features
 
 ## Project Structure
 
 ```text
-project-14-knowledge-platform-frontend/   ← frontend repo (this repo)
-│
-├── app/                  ← Next.js App Router (pages, layouts, and routing)
-│   ├── favicon.ico
+project-14-knowledge-platform-frontend/
+├── app/                           # App Router pages and route shells
+│   ├── admin/users/page.tsx
+│   ├── chat/page.tsx
+│   ├── dashboard/page.tsx
+│   ├── login/actions.ts
+│   ├── login/page.tsx
+│   ├── page.tsx
+│   ├── signup/page.tsx
 │   ├── globals.css
 │   ├── layout.tsx
-│   └── page.tsx
-│
-├── components/           ← Reusable UI components (shadcn/ui integration)
+│   └── ...
+├── components/                    # Reusable UI primitives
 │   └── ui/
-│       └── button.tsx
-│
-├── lib/                  ← Utility functions and API client wrappers
-│   └── utils.ts
-│
-├── public/               ← Static assets (images, icons)
-│
-├── .env.example
-├── .env.local
-├── .gitignore
+├── docs/                          # Project documentation and research notes
+│   ├── development/
+│   └── research/
+├── e2e/                           # Playwright tests
+├── lib/                           # Shared utilities and API helpers
+├── public/                        # Static assets
+├── utils/supabase/                # Supabase client/server helpers
+├── .env.example                   # Local environment template
+├── .github/pull_request_template.md
+├── AGENTS.md
+├── Dockerfile
+├── middleware.ts                  # Protected-route middleware
 ├── next.config.ts
 ├── package.json
+├── playwright.config.ts
+├── README.md
 ├── tsconfig.json
-└── README.md
+└── ...
 ```
 
-## System Architecture & Integration Flow
+## Current Feature Set
 
-The system is split into two independent repositories that communicate using REST APIs and shared authentication.
+### Authenticated user experience
 
-The backend lives in the separate [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) repository.
+- `/` landing page with login CTA
+- `/login` with client-side validation and server action sign-in
+- `/dashboard` protected profile page with user email and role
+- `/chat` protected route shell
+- `/admin/users` protected route shell
+- `/signup` UI with validation and messaging that the backend connection is pending
 
-1. **Authentication:**
-   - Handled directly via Supabase Auth.
-   - The frontend authenticates users directly; requests passed to the backend include Supabase session tokens for server-side validation and group membership lookup.
-2. **API Communication:**
-   - HTTP requests are sent from the Next.js frontend (running locally or deployed on Vercel) to the FastAPI backend.
-   - The frontend must be configured with the appropriate backend URL environment variable, and the backend must allow requests via CORS, due to separate hosting.
-3. **Security:**
-   - The system enforces retrieval-time filtering through the `SecureRetriever` component.
-   - Authorized queries pass through the `SecureRetriever` component to enforce permissions before querying Pinecone or interactions with the LLM.
+### Security behavior
+
+- middleware blocks unauthenticated users from protected pages
+- successful login preserves a deep-link destination through `?next=`
+- signed-out users are redirected back to `/login`
+- protected routes redirect guests to the correct login page
 
 ## Requirements
 
-Make sure the following are installed on your local machine:
-
-- **Node.js** (Version `>=20.9.0` recommended)
-   - Managed via `nvm`
-- **Package Manager:** `npm`
-
----
+Use Node.js 20+ and npm.
 
 ## Environment Variables
 
-This project requires a `.env` file in the root directory based on the provided `.env.example` template. 
-
-Copy the template file:
+Create a local `.env.local` file in the project root based on `.env.example`.
 
 ```bash
-cp .env.example .env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-publishable-key>
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-Populate the required fields:
-- `NEXT_PUBLIC_SUPABASE_URL`: The Supabase project URL.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: The Supabase public anonymous API key.
+Notes:
 
-## Local Setup Instructions
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required for Supabase Auth.
+- `NEXT_PUBLIC_API_URL` is used by the frontend API helper when calling the backend and may be adjusted when the backend is running elsewhere.
+- Playwright auth tests may also use `E2E_USER_EMAIL` and `E2E_USER_PASSWORD` if you want to override the default credentials.
 
-Clone the repository and navigate to the frontend directory:
+## Local Setup
 
 ```bash
 git clone https://github.com/eldavi20/project-14-knowledge-platform-frontend.git
 cd project-14-knowledge-platform-frontend
-```
-
-Ensure you are using the correct version of Node.js:
-
-```bash
-node -v
-```
-
-If you are using an older version, switch to version 20 by running:
-
-```bash
-nvm install 20 && nvm use 20
-```
-
-Install required project packages using `npm`:
-
-```bash
 npm install
+npm run dev
 ```
 
-Run the local development server:
+Then open `http://localhost:3000`.
+
+## Running the App
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser to view the application.
-
-Any changes made in your `app/` or `components/` directories will reload automatically.
-
-### Adding UI Components
-
-This project uses `shadcn/ui` for UI components.
-
-To add new components to the library:
+For a production build:
 
 ```bash
-npx shadcn@latest add [component-name] # e.g., card, button, dialog, etc.
+npm run build
+npm run start
 ```
 
-### Deployment
+## Testing
 
-This repository is continuously deployed to Vercel on every push to the `main` branch.
+Run the end-to-end auth suite:
 
-- **Live Deployment URL:** [project-14-knowledge-platform-front.vercel.app](https://project-14-knowledge-platform-front.vercel.app)
+```bash
+npm run test:e2e
+```
 
-The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.
+This covers unauthenticated route redirects, invalid credentials, successful login, deep-link preservation, and logout behavior.
+
+## Deployment Notes
+
+This repo is intended to be deployed to Vercel. The current project is still in the frontend foundation and auth-validation stage, so deployment should be treated as a preview environment until the remaining knowledge-platform features are implemented.
+
+## Sprint Readiness / Next Steps
+
+The backlog for the next sprint should focus on:
+
+1. Completing the `/signup` backend registration flow
+2. Building the real `/chat` experience against the backend
+3. Adding role-aware admin functionality under `/admin`
+4. Expanding the API integration pattern beyond the current auth shell
+5. Updating route metadata and app branding for the production product
 
 ## Pull Requests
 
-Every PR uses the template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). It includes a summary, a link to the Taiga story, what changed, how to test, screenshots for UI changes, an accessibility checklist, and a final checklist.
-
-Branch names follow `<type>/us-<story>-t-<task>-<short-description>` and commit messages follow Conventional Commits, as defined in the project's pull request process documentation.
+PRs should use the local template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). The template covers summary, story linkage, what changed, how to test, accessibility considerations, and reviewer checklists.

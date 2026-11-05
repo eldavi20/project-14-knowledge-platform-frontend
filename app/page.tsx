@@ -1,53 +1,49 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-between bg-zinc-50 font-sans dark:bg-black">
+    <div className="flex flex-col flex-1 items-center justify-between bg-zinc-50 font-sans dark:bg-black dark:text-zinc-50 min-h-screen">
       <header className="w-full max-w-5xl flex justify-between items-center py-4 px-6 border-b border-zinc-200 dark:border-zinc-800">
-        <span className="font-semibold text-lg tracking-tight">Knowledge Platform</span>
+        <span className="font-semibold text-lg tracking-tight">Permission-Aware AI Knowledge Platform</span>
         <nav>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+            className="inline-flex items-center justify-center rounded-full bg-zinc-900 px-4 py-1.5 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             Log in
           </Link>
         </nav>
       </header>
 
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-24 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Welcome to the Knowledge Platform
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-8 py-24 px-16 bg-white dark:bg-black text-center sm:items-start sm:text-left">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+            Welcome to the Permission-Aware AI Knowledge Platform
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            A secure, permission-aware platform for managing and interacting with enterprise knowledge.
+          <p className="max-w-md text-lg text-zinc-600 dark:text-zinc-400">
+            A secure, permission-aware AI knowledge platform for managing and interacting with enterprise knowledge.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row w-full sm:w-auto">
           <Link
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            className="flex h-12 w-full items-center justify-center rounded-full bg-zinc-900 px-5 text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 sm:w-[158px]"
             href="/login"
           >
             Log in
           </Link>
           <Link
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            className="flex h-12 w-full items-center justify-center rounded-full border border-zinc-300 px-5 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900 sm:w-[158px]"
             href="/dashboard"
           >
             Dashboard
           </Link>
         </div>
       </main>
+
+      <footer className="w-full py-4 text-center text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-900">
+        Permission-Aware Knowledge Agent
+      </footer>
     </div>
   );
 }

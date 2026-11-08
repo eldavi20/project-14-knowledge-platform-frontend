@@ -145,6 +145,7 @@ Run the end-to-end auth suite:
 npm run test:e2e
 ```
 
+<<<<<<< HEAD
 This covers unauthenticated route redirects, invalid credentials, successful login, deep-link preservation, and logout behavior.
 
 ## Deployment Notes
@@ -164,3 +165,12 @@ The backlog for the next sprint should focus on:
 ## Pull Requests
 
 PRs should use the local template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). The template covers summary, story linkage, what changed, how to test, accessibility considerations, and reviewer checklists.
+=======
+The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.
+
+## Pull Requests
+
+Every PR uses the template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). It includes a summary, a link to the Taiga story, what changed, how to test, screenshots for UI changes, an accessibility checklist, and a final checklist.
+
+Branch names follow `<type>/us-<story>-t-<task>-<short-description>` and commit messages follow Conventional Commits, as defined in the project's pull request process documentation.
+>>>>>>> origin/main

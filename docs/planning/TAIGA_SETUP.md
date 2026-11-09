@@ -1,7 +1,9 @@
 # Taiga Setup: Permission-Aware Knowledge Agent
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent  
-**Date:** October 10th, 2026 (Last Modified)
+**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+
+**Date:** November 6, 2026 (Last Modified)
+
 **Purpose:** Complete epic, user story, task, and sprint structure with dependencies and possible task assignments based on team skills.
 
 ---
@@ -36,16 +38,16 @@ Nothing downstream can start until **US-11 (SecureRetriever)** is done.
 
 ## 3. The Layered Build Order
 
-| Layer       | Focus              | Sprint     |
+| Layer       | Focus              | Sprint(s)     |
 | ----------- | ------------------ | ---------- |
 | **Layer 1** | Foundation         | Sprint 1   |
-| **Layer 2** | Identity           | Sprint 1   |
-| **Layer 3** | Documents & ACL    | Sprint 1–2 |
-| **Layer 4** | Secure Retrieval ★ | Sprint 2   |
-| **Layer 5** | Ingestion          | Sprint 2   |
-| **Layer 6** | RAG + Reliability  | Sprint 3   |
-| **Layer 7** | Evaluation + Admin | Sprint 4   |
-| **Layer 8** | Delivery           | Sprint 4   |
+| **Layer 2** | Identity           | Sprint 2   |
+| **Layer 3** | Documents & ACL    | Sprint 3 |
+| **Layer 4** | Secure Retrieval ★ | Sprint 3, 4   |
+| **Layer 5** | Ingestion          | Sprint 4   |
+| **Layer 6** | RAG + Reliability  | Sprint 4, 5   |
+| **Layer 7** | Evaluation + Admin | Sprint 5   |
+| **Layer 8** | Delivery           | Sprint 5   |
 
 ---
 
@@ -750,66 +752,60 @@ LAYER 8: DELIVERY
 
 ## 6. Sprint Assignment
 
-### Sprint 1 — Weeks 1–2 (Foundation + Identity + Documents)
+### Sprint 1 — 10/6 - 10/12 (Foundation)
 
 | Story                       | Points | Depends On | Suggested Lead |
 | --------------------------- | -----: | ---------- | -------------- |
 | US-1: Scaffolding           |      3 | —          | Lana           |
 | US-2: DB + migrations       |      3 | US-1       | Ahmed          |
 | US-3: Frontend scaffolding  |      3 | US-1       | Oleksandr      |
-| US-4: User/Group models     |      5 | US-2       | Ahmed          |
-| US-5: Supabase Auth        |      5 | US-4       | Troy           |
-| US-6: Current user          |      3 | US-5       | Troy           |
-| US-7: Document/ACL models   |      5 | US-4       | Ahmed          |
-| US-8: Permission resolution |      5 | US-6, US-7 | Lana           |
-| US-9: Login UI              |      3 | US-3, US-5 | Elliot         |
-
-**Total:** 35 points
 
 **Parallel tracks:**
 
 - **Backend track:** US-1 → US-2 → US-4 → US-5 → US-6 → US-7 → US-8
 - **Frontend track:** US-1 → US-3 → US-9
+
+---
+
+### Sprint 2 — 10/13 - 10/24 (Authentication)
+
+| Story                        | Points | Depends On  | Suggested Lead |
+| ---------------------------- | -----: | ----------- | -------------- |
+| US-4: User/Group models     |      5 | US-2       | Ahmed          |
+| US-5: Supabase Auth        |      5 | US-4       | Troy           |
+| US-6: Current user          |      3 | US-5       | Troy           |
+| US-9: Login UI              |      3 | US-3, US-5 | Elliot         |
+
 - **Troy** fits naturally into US-5 and US-6 (Supabase Auth + current user) because of his strong API background.
 
 ---
 
-### Sprint 2 — Weeks 3–4 (Secure Retrieval + Ingestion)
-
-| Story                        | Points | Depends On  | Suggested Lead |
-| ---------------------------- | -----: | ----------- | -------------- |
-| US-10: Vector projection     |      5 | US-7        | Oleksandr      |
-| US-11: SecureRetriever ★     |      8 | US-8, US-10 | Lana           |
-| US-12: Chat endpoint         |      5 | US-11       | Troy           |
-| US-13: Fail closed           |      3 | US-11       | Lana           |
-| US-14: Chat UI shows chunks  |      5 | US-9, US-12 | Oleksandr      |
-| US-15: Mock source ingestion |      5 | US-10       | Ahmed          |
-| US-16: Sync + revocation     |      5 | US-15       | Ahmed          |
-
-**Total:** 36 points
-
-**Troy's fit:** US-12 (chat endpoint) matches his API design strength, and his interest in RAG starts here.
-
----
-
-### Sprint 3 — Weeks 5–6 (RAG + Reliability)
+### Sprint 3 — 10/24 - 11/7 (ACL + Secure Retrieval)
 
 | Story                        | Points | Depends On   | Suggested Lead |
 | ---------------------------- | -----: | ------------ | -------------- |
-| US-17: Baseline RAG          |      8 | US-11, US-12 | Troy           |
-| US-18: Hybrid retrieval      |      8 | US-17        | Oleksandr      |
-| US-19: Refusal               |      8 | US-17        | Lana           |
-| US-20: Citations + streaming |      5 | US-17        | Troy           |
-| US-21: Freshness             |      5 | US-17        | Lana           |
-| US-22: Conflict              |      8 | US-21        | Lana           |
-
-**Total:** 42 points
-
-**Troy's fit:** This is his "want to learn" sprint. US-17 (baseline RAG) and US-20 (citations + streaming) give him deep exposure to the AI side. Pair him with Lana for US-19.
+| US-7: Document/ACL models   |      5 | US-4       | Ahmed          |
+| US-8: Permission resolution |      5 | US-6, US-7 | Lana           |
+| US-10: Vector projection     |      5 | US-7        | Oleksandr      |
+| US-11: SecureRetriever ★     |      8 | US-8, US-10 | Lana           |
+| US-13: Fail closed           |      3 | US-11       | Lana           |
 
 ---
 
-### Sprint 4 — Weeks 7–8 (Evaluation + Delivery)
+### Sprint 4 — 11/7 - 11/21 (Ingestion + RAG Baseline + Chat UI)
+
+| Story                    | Points | Depends On | Suggested Lead |
+| ------------------------ | -----: | ---------- | -------------- |
+| US-12: Chat endpoint         |      5 | US-11       | Troy           |
+| US-14: Chat UI shows chunks  |      5 | US-9, US-12 | Oleksandr      |
+| US-15: Mock source ingestion |      5 | US-10       | Ahmed          |
+| US-16: Sync + revocation     |      5 | US-15       | Ahmed          |
+| US-17: Baseline RAG          |      8 | US-11, US-12 | Troy           |
+| US-18: Hybrid retrieval      |      8 | US-17        | Oleksandr      |
+
+---
+
+### Sprint 5 — 11/21 - 12/4 (Reliability + Evaluation + Delivery)
 
 | Story                    | Points | Depends On | Suggested Lead |
 | ------------------------ | -----: | ---------- | -------------- |
@@ -818,8 +814,10 @@ LAYER 8: DELIVERY
 | US-25: CI security gates |      5 | US-24      | Lana           |
 | US-26: Admin UI + audit  |      5 | US-12      | Ahmed          |
 | US-27: Demo video        |      5 | US-26      | Elliot         |
-
-**Total:** 28 points
+| US-19: Refusal               |      8 | US-17        | Lana           |
+| US-20: Citations + streaming |      5 | US-17        | Troy           |
+| US-21: Freshness             |      5 | US-17        | Lana           |
+| US-22: Conflict              |      8 | US-21        | Lana           |
 
 ---
 
@@ -827,23 +825,15 @@ LAYER 8: DELIVERY
 
 Every team member touches the frontend at some point.
 
-| Sprint   | Frontend Story      | Frontend Tasks                                                   |
+| Sprint(s)   | Frontend Story      | Frontend Tasks                                                   |
 | -------- | ------------------- | ---------------------------------------------------------------- |
-| Sprint 1 | US-3, US-9          | Scaffolding (shared), Login page (shared), route shells (shared) |
-| Sprint 2 | US-14               | ChatInput, MessageList, ChunkCard, UserSwitcher                  |
-| Sprint 3 | US-20, US-21, US-22 | CitationLink, SourcePanel, FreshnessWarning, ConflictNotice      |
-| Sprint 4 | US-26, US-27        | Admin page, DocumentList, AuditLog, MetricsDashboard             |
+| Sprint 1 | US-3          | Scaffolding (shared), route shells (shared) |
+| Sprint 2 | US-9               | Login page (shared)                  |
+| Sprint 3 | US-14               | ChatInput, MessageList, ChunkCard, UserSwitcher                  |
+| Sprint 4, 5 | US-20, US-21, US-22 | CitationLink, SourcePanel, FreshnessWarning, ConflictNotice      |
+| Sprint 4, 5 | US-26, US-27        | Admin page, DocumentList, AuditLog, MetricsDashboard             |
 
 **Rule:** Every team member contributes at least one frontend task per sprint.
-
-### Suggested Frontend Rotation
-
-| Sprint   | Lana             | Troy             | Oleksandr    | Ahmed            | Elliot         |
-| -------- | ---------------- | ---------------- | ------------ | ---------------- | -------------- |
-| Sprint 1 | Route wrapper    | Login form field | Scaffolding  | Login page       | Empty shells   |
-| Sprint 2 | —                | ChatInput        | Chat page    | ChunkCard        | MessageList    |
-| Sprint 3 | —                | SourcePanel      | CitationLink | FreshnessWarning | ConflictNotice |
-| Sprint 4 | MetricsDashboard | —                | AuditLog     | DocumentList     | Admin page     |
 
 ---
 

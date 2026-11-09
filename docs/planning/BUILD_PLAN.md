@@ -1,6 +1,9 @@
 # Build Plan — Permission-Aware Knowledge Agent
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent  
+**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+
+**Date:** November 6, 2026 (Last Modified)
+
 **Purpose:** The dependency-aware engineering roadmap for building the system, with the frontend woven in so we can see progress at every phase.
 
 ---
@@ -15,7 +18,7 @@ We cannot build retrieval, RAG, freshness, or conflict detection before we have:
 2. Permission resolution
 3. An enforced ACL boundary
 
-But we also cannot wait until Week 8 to see anything working. The frontend is built in parallel from Week 1 so every phase produces something visible.
+But we also cannot wait until Sprint 5 to see anything working. The frontend is built in parallel from Sprint 1 so every phase produces something visible.
 
 The security invariant that must hold at every retrieval stage:
 
@@ -28,24 +31,36 @@ Where:
 
 ---
 
+## Current backend baseline
+
+The initial foundation is now present: FastAPI root/health routes, Supabase
+Auth signup/login and token verification, async SQLAlchemy session setup,
+`users`/`profiles`/`groups`/`user_groups` models, one Alembic revision, and a
+default-group seed script. Unit and integration tests cover health, auth, and
+model metadata.
+
+The next major backend milestones remain document/ACL persistence, permission
+resolution, a `SecureRetriever`, ingestion, and the retrieval/RAG pipeline.
+The evaluation runner and leakage gate are placeholders, so the authorization
+invariant above is a target and is not currently verified in CI.
+
+---
+
 ## 2. The Build Order (High Level)
 
 ```text
-WEEK 1 — Foundation + Authentication
-WEEK 2 — Documents + ACL + Authorization Tests
-WEEK 3 — SECURE RETRIEVAL ★
-WEEK 4 — Ingestion (mock source first)
-WEEK 5 — RAG (5A baseline → 5B hybrid → 5C reliability)
-WEEK 6 — Freshness + Conflict
-WEEK 7 — Evaluation Harness (assembles continuous testing)
-WEEK 8 — Delivery + Demo
+SPRINT 1 — Foundation
+SPRINT 2 — Authentication
+SPRINT 3 — Documents + ACL + Authorization Tests + SECURE RETRIEVAL ★
+SPRINT 4 — Ingestion (mock source first) + RAG (5A baseline → 5B hybrid)
+SPRINT 5 — Reliability + Freshness + Conflict + Evaluation Harness (assembles continuous testing) + Freshness + Conflict + Delivery + Demo
 ```
 
 Each phase produces a **working, testable, visible increment**.
 
 ---
 
-## 3. Phase 0/1 — Foundation + Authentication (Week 1)
+## 3. Phase 0/1 — Foundation + Authentication (Sprint 1, 2)
 
 **Goal:** Application boots. Real login works in the browser. A protected page is reachable.
 
@@ -103,7 +118,7 @@ Each phase produces a **working, testable, visible increment**.
 
 ---
 
-## 4. Phase 2 — Documents + ACL + Authorization Tests (Week 2)
+## 4. Phase 2 — Documents + ACL + Authorization Tests (Sprint 3)
 
 **Goal:** Documents exist with ACLs, visible in Admin UI. The authorization contract is independently verified before vector retrieval exists.
 
@@ -156,7 +171,7 @@ Open `/admin` → a table of documents with their ACLs and which users/groups ca
 
 ---
 
-## 5. Phase 3 — SECURE RETRIEVAL ★ (Week 3)
+## 5. Phase 3 — SECURE RETRIEVAL ★ (Sprint 3, 4)
 
 **Goal:** The system enforces `retrieved_chunks ⊆ authorized_chunks` at every retrieval boundary.
 
@@ -231,7 +246,7 @@ def test_unauthorized_never_crosses_retrieval_boundary(client, intern_token):
 
 ---
 
-## 6. Phase 4 — Ingestion (Week 4)
+## 6. Phase 4 — Ingestion (Sprint 4)
 
 **Goal:** Documents flow from a mock source into Supabase and the vector DB.
 
@@ -288,13 +303,13 @@ Vector DB
 
 ---
 
-## 7. Phase 5 — RAG (Week 5)
+## 7. Phase 5 — RAG (Sprint 4, 5)
 
 **Goal:** The chat UI answers questions with citations and refusals.
 
 **Phase 5 is split into three sub-phases. Each sub-phase is tested independently before adding the next.**
 
-### Phase 5A — Baseline RAG (Days 1–2)
+### Phase 5A — Baseline RAG (Sprint 4)
 
 ```text
 SecureRetriever → authorized chunks → Evidence → LLM → Answer
@@ -312,7 +327,7 @@ SecureRetriever → authorized chunks → Evidence → LLM → Answer
 
 **Exit criteria:** System answers questions with authorized evidence only.
 
-### Phase 5B — Hybrid Retrieval (Days 3–4)
+### Phase 5B — Hybrid Retrieval (Sprint 4, 5)
 
 ```text
 Vector ─┐
@@ -328,7 +343,7 @@ BM25 ───┘
 
 **Exit criteria:** Hybrid retrieval improves Recall@5 compared to baseline.
 
-### Phase 5C — Reliability (Day 5)
+### Phase 5C — Reliability (Sprint 4, 5)
 
 ```text
 Query rewrite → Retrieval → Evidence → Generate → Verify → Refuse if needed
@@ -361,7 +376,7 @@ Query rewrite → Retrieval → Evidence → Generate → Verify → Refuse if n
 
 ---
 
-## 8. Phase 6 — Freshness + Conflict (Week 6)
+## 8. Phase 6 — Freshness + Conflict (Sprint 5)
 
 **Goal:** The chat UI shows freshness warnings and conflict notices.
 
@@ -402,11 +417,11 @@ Query rewrite → Retrieval → Evidence → Generate → Verify → Refuse if n
 
 ---
 
-## 9. Phase 7 — Evaluation Harness (Week 7)
+## 9. Phase 7 — Evaluation Harness (Sprint 5)
 
 **Goal:** Assemble the continuous testing into a unified harness. CI gates enforce security.
 
-**Important:** Testing started in Week 2. Week 7 **assembles** what we have been building, not starts testing for the first time.
+**Important:** Testing started in Sprint 3. Sprint 5 **assembles** what we have been building, not starts testing for the first time.
 
 ### Backend Build Order
 
@@ -464,7 +479,7 @@ uv run python -m app.evaluation.runner
 
 ---
 
-## 10. Phase 8 — Delivery + Demo (Week 8)
+## 10. Phase 8 — Delivery + Demo (Sprint 5)
 
 **Goal:** A polished demo-ready application.
 
@@ -545,18 +560,18 @@ uv run python -m app.evaluation.runner
 
 ## 12. The Continuous Testing Timeline
 
-Testing is not a phase. It is a continuous activity that starts in Week 2.
+Testing is not a phase. It is a continuous activity that begins in Sprint 3.
 
-| Week   | Tests Added                                           |
+| Sprint(s)   | Tests Added                                           |
 | ------ | ----------------------------------------------------- |
-| Week 2 | PermissionService unit tests (authorization contract) |
-| Week 3 | Permission leakage, ACL invariant, fail-closed        |
-| Week 4 | Ingestion, revocation                                 |
-| Week 5 | Retrieval metrics, RAG tests                          |
-| Week 6 | Freshness, conflict tests                             |
-| Week 7 | Unified evaluation harness + CI reporting             |
+| Sprint 3 | PermissionService unit tests (authorization contract) |
+| Sprint 3 | Permission leakage, ACL invariant, fail-closed        |
+| Sprint 4 | Ingestion, revocation                                 |
+| Sprint 4 | Retrieval metrics, RAG tests                          |
+| Sprint 4, 5 | Freshness, conflict tests                             |
+| Sprint 5 | Unified evaluation harness + CI reporting             |
 
-Week 7 **assembles** the evaluation system — it does not start testing for the first time.
+Sprint 5 **assembles** the evaluation system — it does not start testing for the first time.
 
 ---
 
@@ -572,15 +587,15 @@ See Phase 7 (Section 9) for the canonical CI workflow table (`test.yml`, `securi
 
 | Milestone | When   | Proves                                                 |
 | --------- | ------ | ------------------------------------------------------ |
-| M1        | Week 1 | Application boots                                      |
-| M2        | Week 1 | Authentication works                                   |
-| M3        | Week 2 | Identity + ACL model works                             |
-| M4        | Week 3 | **Unauthorized chunks never cross retrieval boundary** |
-| M5        | Week 4 | Documents can be ingested and projected                |
-| M6        | Week 5 | Secure RAG produces grounded answers/refusals          |
-| M7        | Week 6 | Freshness/conflicts are surfaced                       |
-| M8        | Week 7 | Regression/security evaluation is automated            |
-| M9        | Week 8 | Complete demonstrable system                           |
+| M1        | Sprint 1 | Application boots                                      |
+| M2        | Sprint 2 | Authentication works                                   |
+| M3        | Sprint 2, 3 | Identity + ACL model works                             |
+| M4        | Sprint 3, 4 | **Unauthorized chunks never cross retrieval boundary** |
+| M5        | Sprint 4 | Documents can be ingested and projected                |
+| M6        | Sprint 4 | Secure RAG produces grounded answers/refusals          |
+| M7        | Sprint 4, 5 | Freshness/conflicts are surfaced                       |
+| M8        | Sprint 4, 5 | Regression/security evaluation is automated            |
+| M9        | Sprint 5 | Complete demonstrable system                           |
 
 **The most important milestone is M4.** It is not "users see different chunks." It is "unauthorized data cannot cross the retrieval boundary."
 
@@ -591,12 +606,12 @@ See Phase 7 (Section 9) for the canonical CI workflow table (`test.yml`, `securi
 | Anti-Pattern                                                    | Why It Fails                                                         |
 | --------------------------------------------------------------- | -------------------------------------------------------------------- |
 | Build retrieval before security                                 | We will rewrite everything                                           |
-| Wait until Week 8 for any UI                                    | We can't see progress, can't demo early                              |
+| Wait until Sprint 5 for any UI                                    | We can't see progress, can't demo early                              |
 | Skip Phase 3 (SecureRetriever)                                  | Everything downstream becomes insecure                               |
 | Build everything, then test                                     | We can't tell what broke                                             |
 | Make Google Drive a hard dependency                             | External APIs add complexity we don't need to solve the core problem |
 | Add HyDE before baseline retrieval                              | Too many variables to diagnose                                       |
-| Wait until Week 7 to start testing                              | Security bugs compound                                               |
+| Wait until Sprint 4/5 to start testing                              | Security bugs compound                                               |
 | Make the frontend enforce permissions                           | The backend is the only trusted authorization boundary               |
 | Make `security.yml` duplicate `evaluation.yml`                  | They have different roles and different failure semantics            |
 | Let `secure_retriever.py` drift from `services/retrieval/` | Canonical location is `app/services/retrieval/secure_retriever.py` — one file, one source of truth |
@@ -625,17 +640,6 @@ Evaluation
 Delivery
 ```
 
-At the same time, the frontend evolves alongside the backend:
-
-```text
-Week 1 → Login
-Week 2 → Admin + ACL visibility
-Week 3 → Retrieval UI
-Week 4 → Sync UI
-Week 5 → Chat + citations + refusals
-Week 6 → Freshness + conflict indicators
-Week 7 → Metrics + audit dashboard
-Week 8 → Polish + demo
-```
+At the same time, the frontend evolves alongside the backend.
 
 The result is a project that is not only built in the correct dependency order, but also produces visible progress every week while continuously testing the security properties that matter most.

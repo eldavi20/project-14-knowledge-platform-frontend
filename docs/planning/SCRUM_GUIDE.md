@@ -1,7 +1,9 @@
-# Scrum Guide - Permission-Aware Knowledge Agent
+# Scrum Guide — Permission-Aware Knowledge Agent
 
-**Project:** SER 401 - Project 14: Permission-Aware Knowledge Agent  
-**Date:** October 10th, 2026 (Last Modified)
+**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+
+**Date:** November 6, 2026 (Last Modified)
+
 **Purpose:** How the team uses Taiga and Scrum to plan, track, and deliver work across the 8-week build.
 
 ---
@@ -99,16 +101,17 @@ PROJECT: Permission-Aware Knowledge Agent
 
 ## 4. The Epic Definitions
 
-| Epic                 | Purpose                             | Weeks |
+| Epic                 | Purpose                             | Sprint(s) |
 | -------------------- | ----------------------------------- | ----: |
-| **Authentication**   | Users can log in and receive a Supabase session |     1 |
-| **Documents & ACL**  | Documents exist with permissions    |     2 |
-| **Secure Retrieval** | ★ Permissions enforced at retrieval |     3 |
+| **Foundation**   | Initial development environment setup |     1 |
+| **Authentication**   | Users can log in and receive a Supabase session |     2 |
+| **Documents & ACL**  | Documents exist with permissions    |     3 |
+| **Secure Retrieval** | ★ Permissions enforced at retrieval |     3, 4 |
 | **Ingestion**        | Documents flow from sources         |     4 |
-| **RAG Pipeline**     | System answers questions            |     5 |
-| **Reliability**      | Freshness + Conflict warnings       |     6 |
-| **Evaluation**       | Metrics + CI gates                  |     7 |
-| **Frontend**         | UI across all phases                |   1–8 |
+| **RAG Pipeline**     | System answers questions            |     4, 5 |
+| **Reliability**      | Freshness + Conflict warnings       |     5 |
+| **Evaluation**       | Metrics + CI gates                  |     4, 5 |
+| **Frontend**         | UI across all phases                |   1–5 |
 
 ---
 
@@ -182,10 +185,10 @@ Tasks are the concrete work items under a story.
 
 | Task                                   | Owner     | Estimated Hours |
 | -------------------------------------- | --------- | --------------: |
-| Initialize Next.js project structure | Elliot      |               2 |
-| Build responsive Next.js login page with form validation                  | Troy      |               4 |
-| Create Supabase authentication client helper in `src/lib/api.ts`           | Ahmed     |               3 |
-| Create protected route wrapper component to handle unauthenticated redirection           | Oleksandr |               2 |
+| Create `POST /api/auth/login` endpoint | Lana      |               3 |
+| Add password hashing                   | Troy      |               2 |
+| Write login integration test           | Ahmed     |               2 |
+| Add Supabase Auth token validation           | Oleksandr |               4 |
 
 ### Rules
 
@@ -394,14 +397,15 @@ We use a simplified Fibonacci scale:
 
 ---
 
-## 13. The Sprint Map (8 Weeks)
+## 13. The Sprint Map (Semester 1 of 2)
 
-| Sprint       | Weeks | Focus                        | Key Stories                                     |
+| Sprint       | Dates | Focus                        | Key Stories                                     |
 | ------------ | ----- | ---------------------------- | ----------------------------------------------- |
-| **Sprint 1** | 1–2   | Foundation + Auth + ACL      | Login, session, documents, principals           |
-| **Sprint 2** | 3–4   | Secure Retrieval + Ingestion | SecureRetriever, ACL filter, mock ingestion     |
-| **Sprint 3** | 5–6   | RAG + Reliability            | Retrieval, hybrid, refusal, freshness, conflict |
-| **Sprint 4** | 7–8   | Evaluation + Delivery        | Golden dataset, CI gates, admin UI, demo        |
+| **Sprint 1** | 10/6 - 10/12   | Foundation      | Set up the development environment, perform research           |
+| **Sprint 2** | 10/13 - 10/24   | Authentication | Login, session     |
+| **Sprint 3** | 10/24 - 11/7   | ACL + Secure Retrieval            | SecureRetriever, documents, principals, ACL filter, mock ingestion |
+| **Sprint 4** | 11/7 - 11/21   | Ingestion + RAG        | Ingestion, chat UI, baseline RAG retrieval, hybrid, refusal, freshness, conflict, golden dataset        |
+| **Sprint 5** | 11/21 - 12/4   | Reliability + Evaluation + Delivery        | Golden dataset, hybrid retrieval, CI gates, admin UI, reliability, evaluation, demo        |
 
 **Rule:** Each sprint produces something demoable.
 
@@ -475,16 +479,19 @@ The security-related work is not postponed until the final sprint:
 
 ```text
 Sprint 1
-Foundation → Authentication → Documents + ACL
+              Foundation
                          ↓
 Sprint 2
-              Secure Retrieval
+              Authentication
                          ↓
 Sprint 3
-              RAG + Reliability
+              ACL + Secure Retrieval
                          ↓
 Sprint 4
-              Evaluation + CI Security Gates
+              Ingestion + RAG (Baseline) + Chat UI
+                         ↓
+Sprint 5
+              RAG (Hybrid Retrieval) + Reliability + Evaluation
 ```
 
 The **Secure Retrieval** epic is the critical transition point. Once it is implemented, tested, and tracked through Taiga, later RAG and retrieval-quality work builds on an established authorization boundary.

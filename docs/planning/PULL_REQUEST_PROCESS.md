@@ -1,7 +1,9 @@
-# Pull Request Process - Permission-Aware Knowledge Agent
+# Pull Request Process — Permission-Aware Knowledge Agent
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent  
-**Date:** October 10th, 2026 (Last Modified)
+**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+
+**Date:** September 16, 2026
+
 **Purpose:** The PR rules, format, and review process the team follows to keep the codebase secure and reviewable.
 
 ---
@@ -31,7 +33,12 @@ Without a PR process, authorization bugs can slip through, and the professor can
 |   6 | **Every PR links to a Taiga user story and task**            | Traceability                     |
 |   7 | **Every branch and PR title names its US and task**          | Story/task visible without opening Taiga |
 |   8 | **PR size target: under 400 lines**                          | Reviewable in one sitting        |
-|   9 | **`security.yml` must pass**                                 | Zero leakage is non-negotiable   |
+|   9 | **`security.yml` must pass**                                 | Required check; currently placeholder-only |
+
+The checked-in workflows do not configure GitHub branch protection. Confirm
+required checks and approvals in repository settings. Also, a passing current
+`security.yml` is **not evidence of zero leakage**: its security test and gate
+are placeholders until real retrieval authorization tests are implemented.
 
 ### Note on Rule 5
 
@@ -160,7 +167,7 @@ Taiga Task: T-11.5
 
 - **Type of Change** — check all that apply, especially **Security-boundary change** (drives the 2-reviewer rule in §2).
 - **What Changed** — concrete bullet list, not prose.
-- **How to Test** — exact test commands (e.g., `npm test`, `npm run lint`, etc.) plus the expected result (e.g. 0% leakage).
+- **How to Test** — exact `uv run pytest ...` commands plus the expected result (e.g. 0% leakage).
 - **Security Checklists** — the all-PRs list always applies; the security-boundary list (vector/BM25/RRF/reranker/LLM-context ⊆ authorized, fail-closed, revocation, no admin bypass) applies whenever Type of Change flags a boundary change.
 - **Testing Checklist, Reviewer Notes, final Checklist** — branch/commit/title conventions, Taiga story + task link, CI green, docs updated.
 
@@ -183,11 +190,24 @@ A **security-boundary PR** is any PR that changes:
 
 ### Illustrative File List
 
-**To be updated once security-sensitive files are introduced.**
+The following file list is illustrative, not exhaustive.
+
+| Touched Area | Why |
+|---|---|
+| `app/core/security.py` | Auth logic |
+| `app/core/permission_service.py` | Principal resolution |
+| `app/services/retrieval/secure_retriever.py` | The security boundary |
+| `app/services/retrieval/vector_store.py` | Filter application |
+| `app/services/retrieval/bm25.py` | Filter application |
+| `app/services/retrieval/hybrid.py` | RRF preserves ACL |
+| `app/services/rag/nodes/retrieve.py` | Calls SecureRetriever |
+| `app/services/sync/projection.py` | ACL projection |
+| `tests/security/` | Security tests |
+| Any file modifying the ACL schema | Data integrity |
 
 ### Security-Boundary Rule
 
-**To be updated once security-sensitive files are introduced.**
+Security-boundary PRs require **2 qualified approvals when available**, and all `security.yml` checks must pass.
 
 ---
 
@@ -282,22 +302,24 @@ All retrieval must go through SecureRetriever. See README security rule.
 
 ## 12. The CI Requirements
 
-Every PR must pass these before it can merge:
+The intended PR checks are:
 
 | Check                    | Workflow         | Blocks Merge                    |
 | ------------------------ | ---------------- | ------------------------------- |
 | Unit + integration tests | `test.yml`       | Yes                             |
-| Lint + type check        | `test.yml`       | Yes                             |
-| Security suite           | `security.yml`   | **Yes — zero leakage required** |
-| Evaluation metrics       | `evaluation.yml` | Initially informational         |
+| Lint + type check        | None             | Not currently run by CI         |
+| Security suite           | `security.yml`   | Required by policy; currently placeholder-only |
+| Evaluation metrics       | `evaluation.yml` | Placeholder report today         |
 
 ### The One Rule That Never Bends
 
-`security.yml` must pass.
+`security.yml` must pass as a check, but its current passing result does not
+verify the zero-leakage invariant.
 
-If it fails, no merge — regardless of who approves.
+When configured as a required status check, a failing job blocks merge,
+regardless of who approves.
 
-### What `security.yml` Passing Means
+### What a real security gate must verify
 
 ```text
 Permission leakage rate = 0%
@@ -308,13 +330,15 @@ Unauthorized reranker inputs = 0
 Unauthorized LLM context chunks = 0
 ```
 
-Any non-zero value fails the PR regardless of other results.
+Once implemented, any non-zero value must fail the PR regardless of other
+results. These checks are not present yet.
 
 ### Evaluation Thresholds
 
 Evaluation metrics are initially informational and may become blocking once the baseline and thresholds are validated.
 
-Security invariants are always blocking.
+Security invariants should become blocking once the real gate is implemented
+and configured as a required status check.
 
 ---
 

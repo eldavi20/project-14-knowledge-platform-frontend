@@ -1,5 +1,7 @@
 # Next.js Tutorial Summary — Ahmed Sawy
 
+> Note: This is a historical learning summary from the Next.js tutorial. It documents the concepts learned during research and should not be treated as the current architecture source of truth. Use the project README and auth documentation for the active sprint implementation.
+
 **Story:** US-130 — Build upon basic Next.js knowledge for production-ready frontend work
 **Task:** T-51 [Ahmed] Complete the official tutorial and write a summary
 **Tutorial:** https://nextjs.org/learn 

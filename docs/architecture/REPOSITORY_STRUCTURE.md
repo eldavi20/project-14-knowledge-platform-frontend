@@ -1,14 +1,62 @@
-# Complete Repository Structure - Permission-Aware Knowledge Agent
+# Current and Target Repository Structure — Permission-Aware Knowledge Agent
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent  
-**Date:** October 10th, 2026 (Last Modified)
+**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+
+**Date:** November 10, 2026 (Last Modified)
+
 **Purpose:** Complete repository structure for the project, reflecting the two-database architecture, the security boundary rule, and the eight-week implementation roadmap.
+
+## Current Implementation Snapshot
+
+This document includes a target architecture, but most of its proposed service
+and retrieval modules do not exist yet. The current backend layout is:
+
+```text
+app/
+├── api/          auth.py, health.py
+├── core/         security.py
+├── db/           base.py, session.py, seed.py
+├── evaluation/   gates.py, runner.py (both placeholders)
+├── models/       user.py, profile.py, group.py
+├── schemas/      auth.py, chat.py
+├── config.py
+└── main.py
+migrations/
+└── versions/     d6c1c9809b5c_create_user_profile_group_and_user_.py
+tests/
+├── __init__.py
+├── conftest.py
+├── unit/
+│   ├── __init__.py
+│   ├── test_chat_schema.py
+│   └── test_models.py
+├── integration/
+│   ├── __init__.py
+│   ├── test_auth.py
+│   ├── test_document_migration.py
+│   ├── test_get_current_user.py
+│   ├── test_health.py
+│   └── test_signup.py
+├── security/
+│   ├── __init__.py
+│   ├── test_acl_filter.py
+│   ├── test_acl_invariants.py
+│   ├── test_fail_closed.py
+│   └── test_placeholder.py
+```
+
+The current API has root/health and auth routes. The current schema has only
+`users`, `profiles`, `groups`, and `user_groups` (in addition to Supabase's
+managed `auth.users`). There is no chat endpoint, document/ACL model,
+PermissionService, SecureRetriever, RAG service, BM25/vector adapter, or
+retrieval-stage test suite yet. The proposed design below must not be used as
+an inventory of implemented code.
 
 ---
 
-## 1. Architecture Overview
+## 1. Target Architecture Overview (planned)
 
-The project is organized around a clear separation of responsibilities:
+The repository is organized around a clear separation of responsibilities:
 
 ```text
 Frontend (Next.js + shadcn/ui, separate repo → Vercel)
@@ -40,107 +88,14 @@ Vector DB (searchable projection)
 
 ---
 
-## 2. The Complete Repository Structure
+## 2. Proposed Future Repository Structure
 
 Two repositories (sponsor decision, October 2026):
 
-- **Frontend repo:** `project-14-knowledge-platform-frontend` (this repo - Next.js + Tailwind CSS + shadcn/ui, [Vercel](https://project-14-knowledge-platform-front.vercel.app/))
-- **Backend repo:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) (FastAPI + Supabase + Pinecone, Docker)
+- **Backend repo:** `project-14-knowledge-platform` (this repo — FastAPI + Supabase + Pinecone, Docker)
+- **Frontend repo:** `project-14-frontend` (Next.js + shadcn/ui, Vercel — link once created)
 
-Frontend repo layout (**expected; subject to change**):
-
-```text
-project-14-knowledge-platform-frontend/
-├── app/                                  ← Next.js App Router
-│   ├── login/page.tsx                    ← Login via Supabase Auth (Phase 1)
-│   ├── chat/page.tsx                     ← Chat + chunks/citations (Phases 3, 5)
-│   └── admin/page.tsx                    ← Documents, ACLs, sync, metrics (Phases 2, 4, 7)
-├── components/
-│   ├── ui/                               ← shadcn/ui
-│   ├── chat/
-│   │   ├── ChatInput.tsx                 ← Query input (Phase 3)
-│   │   ├── MessageList.tsx               ← Message list (Phase 3)
-│   │   ├── ChunkCard.tsx                 ← Retrieved chunk display (Phase 3)
-│   │   ├── MessageBubble.tsx
-│   │   ├── CitationLink.tsx              ← Clickable citation (Phase 5)
-│   │   ├── SourcePanel.tsx               ← Source side panel (Phase 5)
-│   │   ├── RefusalMessage.tsx            ← Refusal display (Phase 5)
-│   │   ├── FreshnessWarning.tsx          ← Freshness banner + badge (Phase 6)
-│   │   ├── FreshnessBadge.tsx
-│   │   └── ConflictNotice.tsx            ← Conflict display (Phase 6)
-│   ├── admin/
-│   │   ├── DocumentList.tsx              ← Document table (Phase 2)
-│   │   ├── PermissionMatrix.tsx          ← ACL matrix (Phase 2)
-│   │   ├── SourceList.tsx                ← Ingestion sources (Phase 4)
-│   │   ├── SyncButton.tsx + SyncStatus.tsx
-│   │   ├── AuditLog.tsx              ← Query history (Phase 7)
-│   │   ├── MetricsDashboard.tsx          ← Evaluation scores (Phase 7)
-│   │   └── LeakGauge.tsx             ← 0% leakage gauge (Phase 7)
-│   └── auth/
-│       ├── UserSwitcher.tsx              ← Switch test users (Phase 3)
-│       └── ProtectedRoute.tsx            ← Redirect if not logged in (Phase 1)
-├── hooks/
-│   ├── useAuth.ts                        ← Supabase Auth session (Phase 1)
-│   ├── useChat.ts
-│   └── useAudit.ts
-├── lib/
-│   ├── api.ts                            ← Backend client (Phase 1)
-│   ├── supabase.ts                   ← Supabase browser client (Phase 1)
-│   └── utils.ts
-├── data/                                 ← Test data (outside backend)
-│   ├── evaluation/
-│   │   └── golden_dataset.json
-│   ├── fixtures/
-│   │   ├── mock_users.json
-│   │   └── mock_documents.json
-│   └── sample_sources/
-│       ├── google_drive/
-│       └── discord/
-├── docs/                                 ← Documentation (actual layout)
-│   ├── START_HERE.md                     ← Navigation hub
-│   ├── planning/
-│   │   ├── BUILD_PLAN.md
-│   │   ├── SCRUM_GUIDE.md
-│   │   ├── TAIGA_SETUP.md
-│   │   └── PULL_REQUEST_PROCESS.md
-│   ├── architecture/
-│   │   ├── REPOSITORY_STRUCTURE.md       ← This file (canonical structure)
-│   │   ├── DATABASE_MODEL.md             ← Schema (what)
-│   │   ├── DATABASE_MIGRATIONS.md        ← Async Alembic guide (how to change it)
-│   │   └── DATABASE_QUERIES.md           ← Async query patterns (how to read/write it)
-│   ├── security/
-│   │   ├── PERMISSION_AWARE_RETRIEVAL.md
-│   │   └── CALIBRATED_REFUSAL.md
-│   ├── retrieval/
-│   │   ├── RETRIEVAL_QUALITY.md
-│   │   ├── FRESHNESS_STALENESS_DETECTION.md
-│   │   └── CONFLICT_DETECTION.md
-│   ├── evaluation/
-│   │   └── EVALUATION_HARNESS.md
-│   └── research/
-│       └── hosting-options.md            ← Backend hosting comparison (Railway primary)
-├── scripts/                              ← Utility scripts
-│   ├── seed_db.py
-│   ├── ingest_sample_sources.py
-│   ├── run_evaluation.py
-│   └── generate_diagrams.py
-├── Dockerfile                            ← Backend image (builds from repo root)
-├── docker-compose.yml
-├── docker-compose.test.yml
-├── .env.example                          ← NEXT_PUBLIC_SUPABASE_URL/KEY, BACKEND_URL
-├── .dockerignore
-├── .gitignore
-├── package.json
-├── tsconfig.json
-├── next.config.ts
-├── components.json
-├── pyproject.toml
-├── uv.lock
-├── README.md
-└── LICENSE
-```
-
-Backend repo layout (**expected; subject to change**):
+Backend repo layout:
 
 ```text
 project-14-knowledge-platform/
@@ -148,8 +103,9 @@ project-14-knowledge-platform/
 ├── .github/
 │   └── workflows/
 │       ├── test.yml                    ← Unit + integration tests
-│       ├── evaluation.yml              ← Golden dataset + metrics
-│       └── security.yml                ← ZERO LEAKAGE gate
+│       ├── evaluation.yml              ← Placeholder report runner today
+│       ├── security.yml                ← ZERO LEAKAGE gate
+│       └── docker-build.yml            ← Image build check
 │
 ├── app/
 │   ├── __init__.py
@@ -215,7 +171,8 @@ project-14-knowledge-platform/
 │   │   │   ├── secure_retriever.py ← ★ SECURITY BOUNDARY (canonical location)
 │   │   │   ├── vector_store.py     ← Vector DB client
 │   │   │   ├── bm25.py             ← BM25 index
-│   │   │   ├── hybrid.py           ← Hybrid search + RRF
+│   │   │   ├── rrf.py              ← Reciprocal rank fusion
+│   │   │   ├── hybrid.py           ← Hybrid search (uses RRF)
 │   │   │   ├── reranker.py         ← Cross-encoder reranker
 │   │   │   └── query_rewrite.py    ← Additive query rewriting
 │   │   │
@@ -277,23 +234,35 @@ project-14-knowledge-platform/
 │   ├── __init__.py
 │   ├── conftest.py
 │   ├── unit/
+│   │   ├── __init__.py
 │   │   ├── test_permission_service.py
 │   │   ├── test_freshness_evaluator.py
 │   │   ├── test_conflict_detector.py
-│   │   └── test_acl_translator.py
+│   │   ├── test_acl_translator.py
+│   │   ├── test_chat_schema.py
+│   │   └── test_models.py
 │   ├── integration/
+│   │   ├── __init__.py
 │   │   ├── test_auth.py
 │   │   ├── test_ingestion.py
 │   │   ├── test_retrieval.py
-│   │   └── test_rag_pipeline.py
+│   │   ├── test_rag_pipeline.py
+│   │   ├── test_get_current_user.py
+│   │   ├── test_signup.py
+│   │   ├── test_document_migration.py
+│   │   └── test_health.py
 │   └── security/                   ← Security-critical tests
+│       ├── __init__.py
 │       ├── test_permission_leakage.py
 │       ├── test_acl_invariant_stages.py
 │       ├── test_permission_revocation.py
 │       ├── test_prompt_injection.py
 │       ├── test_fail_closed.py
 │       ├── test_admin_authorization.py
-│       └── test_acl_projection_consistency.py
+│       ├── test_acl_projection_consistency.py
+│       ├── test_acl_filter.py
+│       ├── test_acl_invariants.py
+│       └── test_placeholder.py
 │
 ├── migrations/                     ← Alembic migrations (see DATABASE_MIGRATIONS.md)
 │   ├── env.py
@@ -302,6 +271,106 @@ project-14-knowledge-platform/
 │
 ├── alembic.ini                     ← Alembic config (URL comes from env.py)
 └── .env.example                    ← Local env template (SUPABASE_DB_URL, secrets)
+│
+│   (No requirements.txt — deps live in root pyproject.toml + uv.lock.
+│    See DATABASE_MIGRATIONS.md §4 for the dependency rules.)
+│
+│   (No frontend/ here — the UI lives in the separate frontend repo,
+│    project-14-frontend, deployed to Vercel. Its expected layout:)
+│
+├── [project-14-frontend/]                ← SEPARATE REPO (Next.js + shadcn/ui)
+│   ├── app/                              ← Next.js App Router
+│   │   ├── login/page.tsx                ← Login via Supabase Auth (Phase 1)
+│   │   ├── chat/page.tsx                 ← Chat + chunks/citations (Phases 3, 5)
+│   │   └── admin/page.tsx                ← Documents, ACLs, sync, metrics (Phases 2, 4, 7)
+│   ├── components/
+│   │   ├── ui/                           ← shadcn/ui
+│   │   ├── chat/
+│   │   │   ├── ChatInput.tsx             ← Query input (Phase 3)
+│   │   │   ├── MessageList.tsx           ← Message list (Phase 3)
+│   │   │   ├── ChunkCard.tsx             ← Retrieved chunk display (Phase 3)
+│   │   │   ├── MessageBubble.tsx
+│   │   │   ├── CitationLink.tsx          ← Clickable citation (Phase 5)
+│   │   │   ├── SourcePanel.tsx           ← Source side panel (Phase 5)
+│   │   │   ├── RefusalMessage.tsx        ← Refusal display (Phase 5)
+│   │   │   ├── FreshnessWarning.tsx      ← Freshness banner + badge (Phase 6)
+│   │   │   ├── FreshnessBadge.tsx
+│   │   │   └── ConflictNotice.tsx        ← Conflict display (Phase 6)
+│   │   ├── admin/
+│   │   │   ├── DocumentList.tsx          ← Document table (Phase 2)
+│   │   │   ├── PermissionMatrix.tsx      ← ACL matrix (Phase 2)
+│   │   │   ├── SourceList.tsx            ← Ingestion sources (Phase 4)
+│   │   │   ├── SyncButton.tsx + SyncStatus.tsx
+│   │   │   ├── AuditLog.tsx              ← Query history (Phase 7)
+│   │   │   ├── MetricsDashboard.tsx      ← Evaluation scores (Phase 7)
+│   │   │   └── LeakGauge.tsx             ← 0% leakage gauge (Phase 7)
+│   │   └── auth/
+│   │       ├── UserSwitcher.tsx          ← Switch test users (Phase 3)
+│   │       └── ProtectedRoute.tsx        ← Redirect if not logged in (Phase 1)
+│   ├── hooks/
+│   │   ├── useAuth.ts                    ← Supabase Auth session (Phase 1)
+│   │   ├── useChat.ts
+│   │   └── useAudit.ts
+│   ├── lib/
+│   │   ├── api.ts                        ← Backend client (Phase 1)
+│   │   ├── supabase.ts                   ← Supabase browser client (Phase 1)
+│   │   └── utils.ts
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── next.config.ts
+│   ├── components.json
+│   └── .env.example                      ← NEXT_PUBLIC_SUPABASE_URL/KEY, BACKEND_URL
+│
+├── data/                               ← Test data (outside backend)
+│   ├── evaluation/
+│   │   └── golden_dataset.json
+│   ├── fixtures/
+│   │   ├── mock_users.json
+│   │   └── mock_documents.json
+│   └── sample_sources/
+│       ├── google_drive/
+│       └── discord/
+│
+├── docs/                               ← Documentation (actual layout)
+│   ├── START_HERE.md                 ← Navigation hub
+│   ├── planning/
+│   │   ├── BUILD_PLAN.md
+│   │   ├── SCRUM_GUIDE.md
+│   │   ├── TAIGA_SETUP.md
+│   │   └── PULL_REQUEST_PROCESS.md
+│   ├── architecture/
+│   │   ├── REPOSITORY_STRUCTURE.md   ← This file (canonical structure)
+│   │   ├── DATABASE_MODEL.md         ← Schema (what)
+│   │   ├── DATABASE_MIGRATIONS.md    ← Async Alembic guide (how to change it)
+│   │   └── DATABASE_QUERIES.md       ← Async query patterns (how to read/write it)
+│   ├── security/
+│   │   ├── PERMISSION_AWARE_RETRIEVAL.md
+│   │   └── CALIBRATED_REFUSAL.md
+│   ├── retrieval/
+│   │   ├── RETRIEVAL_QUALITY.md
+│   │   ├── FRESHNESS_STALENESS_DETECTION.md
+│   │   └── CONFLICT_DETECTION.md
+│   └── evaluation/
+│       └── EVALUATION_HARNESS.md
+│   ├── research/
+│   │   └── hosting-options.md            ← Backend hosting comparison (Railway primary)
+│
+├── scripts/                            ← Utility scripts
+│   ├── seed_db.py
+│   ├── ingest_sample_sources.py
+│   ├── run_evaluation.py
+│   └── generate_diagrams.py
+│
+├── Dockerfile                        ← Backend image (builds from repo root)
+├── docker-compose.yml
+├── docker-compose.test.yml
+├── .env.example
+├── .dockerignore
+├── .gitignore
+├── pyproject.toml
+├── uv.lock
+├── README.md
+└── LICENSE
 ```
 
 ---
@@ -317,7 +386,7 @@ project-14-knowledge-platform/
 | `app/schemas/`            | Pydantic schemas for API validation                        |
 | `app/db/`                 | Database session, base class, seed data                    |
 | `app/services/ingestion/` | Source connectors, chunking, ACL translation               |
-| `app/services/retrieval/` | SecureRetriever, vector store, BM25, hybrid, reranker      |
+| `app/services/retrieval/` | SecureRetriever, vector store, BM25, RRF, hybrid, reranker |
 | `app/services/rag/`       | LangGraph orchestration and nodes                          |
 | `app/services/freshness/` | Freshness policy and evaluator                             |
 | `app/services/conflict/`  | Conflict detection, claim extraction, classification       |
@@ -427,6 +496,19 @@ Authorization happens **once**, at the `SecureRetriever` boundary. Everything do
 
 ## 8. The CI Workflow Separation
 
+The current workflows are smaller than the target design shown here:
+
+- `test.yml` runs pytest while excluding `tests/security`.
+- `security.yml` runs `tests/security` (currently a placeholder test) and
+  `app.evaluation.gates`; the gate currently prints a placeholder PASS and
+  always returns success, so it does **not** enforce zero leakage.
+- `evaluation.yml` runs a placeholder that writes
+  `reports/evaluation-report.md`.
+- `docker-build.yml` builds the image when backend-related paths change.
+
+The diagram and table below describe the intended CI capabilities, not current
+test coverage or enforced merge gates.
+
 ```text
 PR opened
     ↓
@@ -444,15 +526,22 @@ tests          metrics
    Report only      Merge gate
 ```
 
-| Workflow         | Contains                                                                     | Blocks merge?              |
-| ---------------- | ---------------------------------------------------------------------------- | -------------------------- |
-| `test.yml`       | Unit + integration + lint/type checks                                        | Yes                        |
-| `security.yml`   | Permission leakage, ACL invariant, fail-closed, revocation, prompt injection | **Yes — zero leakage required** |
-| `evaluation.yml` | Golden dataset, Recall@K, MRR, NDCG, refusal accuracy, faithfulness          | Initially informational (warn only) |
+| Workflow | Intended contents | Target merge behavior |
+| --- | --- | --- |
+| `test.yml` | Unit and integration tests | Required |
+| `security.yml` | Leakage, ACL invariant, fail-closed, revocation, and prompt-injection tests | Required after real tests/gate are implemented |
+| `evaluation.yml` | Golden dataset and quality metrics | Informational until thresholds are validated |
+| `docker-build.yml` | Backend image build | Required when relevant paths change |
 
 ---
 
-## 9. The Docker Compose Setup
+## 9. Target Docker Compose Setup (not current)
+
+The checked-in `docker-compose.yml` only defines the build, port mapping, and
+restart policy. It does not pass environment variables into the container.
+The configuration below is a proposed example, not the checked-in Compose
+configuration. Supply all required settings to the container before running
+the app; host `.env` values are not automatically loaded inside the image.
 
 ```yaml
 services:
@@ -473,13 +562,14 @@ services:
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
 ```
 
-Backend-only compose: no database container (Supabase is hosted) and no frontend service (the Next.js app lives in `project-14-frontend` with its own `NEXT_PUBLIC_*` env and Vercel deployment).
-
-**Note:** Supabase (Postgres + Auth) and Pinecone are external managed services. No local database container is needed — the backend connects via `SUPABASE_DB_URL`. Document this explicitly.
+The target remains backend-only: no database container (Supabase is hosted)
+and no frontend service (the Next.js app is maintained separately). Supabase
+Postgres/Auth are external services; the backend connects through
+`SUPABASE_DB_URL`.
 
 ---
 
-## 10. The Root `.env.example`
+## 10. Suggested Environment Template (not currently checked in)
 
 ```bash
 # Supabase

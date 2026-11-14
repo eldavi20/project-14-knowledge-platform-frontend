@@ -2,59 +2,114 @@
 
 **Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
 
-**Date:** November 10, 2026 (Last Modified)
+**Date:** November 14, 2026 (Last Modified)
 
 **Purpose:** Complete repository structure for the project, reflecting the two-database architecture, the security boundary rule, and the eight-week implementation roadmap.
 
 ## Current Implementation Snapshot
 
 This document includes a target architecture, but most of its proposed service
-and retrieval modules do not exist yet. The current backend layout is:
+and retrieval modules do not exist yet. The current frontend layout is:
 
 ```text
-app/
-├── api/          auth.py, health.py
-├── core/         security.py
-├── db/           base.py, session.py, seed.py
-├── evaluation/   gates.py, runner.py (both placeholders)
-├── models/       user.py, profile.py, group.py
-├── schemas/      auth.py, chat.py
-├── config.py
-└── main.py
-migrations/
-└── versions/     d6c1c9809b5c_create_user_profile_group_and_user_.py
-tests/
-├── __init__.py
-├── conftest.py
-├── unit/
-│   ├── __init__.py
-│   ├── test_chat_schema.py
-│   └── test_models.py
-├── integration/
-│   ├── __init__.py
-│   ├── test_auth.py
-│   ├── test_document_migration.py
-│   ├── test_get_current_user.py
-│   ├── test_health.py
-│   └── test_signup.py
-├── security/
-│   ├── __init__.py
-│   ├── test_acl_filter.py
-│   ├── test_acl_invariants.py
-│   ├── test_fail_closed.py
-│   └── test_placeholder.py
+project-14-knowledge-platform-frontend/
+├── .github/
+│   ├── workflows/
+│   │   └── verify-pr-source.yml
+│   └── pull_request_template.md
+├── app/
+│   ├── admin/
+│   │   └── users/
+│   │   │   └── page.tsx
+│   ├── chat/
+│   │   └── page.tsx
+│   ├── dashboard/
+│   │   └── page.tsx
+│   ├── login/
+│   │   ├── actions.ts
+│   │   └── page.tsx
+│   ├── signup/
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   └── label.tsx
+├── docs/
+│   ├── architecture/
+│   │   ├── DATABASE_MIGRATIONS.md
+│   │   ├── DATABASE_MODEL.md
+│   │   ├── DATABASE_QUERIES.md
+│   │   └── REPOSITORY_STRUCTURE.md
+│   ├── development/
+│   │   ├── auth.md
+│   │   ├── ci.md
+│   │   └── git-workflow.md
+│   ├── evaluation/
+│   │   └── EVALUATION_HARNESS.md
+│   ├── planning/
+│   │   ├── BUILD_PLAN.md
+│   │   ├── PULL_REQUEST_PROCESS.md
+│   │   ├── SCRUM_GUIDE.md
+│   │   └── TAIGA_SETUP.md
+│   ├── research/
+│   │   ├── ci-docker-build.md
+│   │   ├── hosting-options.md
+│   │   ├── nextjs-tutorial-summary-ahmed.md
+│   │   └── nextjs-tutorial-summary-lana.md
+│   ├── retrieval/
+│   │   ├── CONFLICT_DETECTION.md
+│   │   ├── FRESHNESS_STALENESS_DETECTION.md
+│   │   └── RETRIEVAL_QUALITY.md
+│   ├── security/
+│   │   ├── CALIBRATED_REFUSAL.md
+│   │   ├── PERMISSION_AWARE_RETRIEVAL.md
+│   │   └── RETRIEVAL_AUDIT.md
+│   └── START_HERE.md
+├── e2e/
+│   └── auth.spec.ts
+├── hooks/
+│   └── useAuth.ts
+├── lib/
+│   ├── api.ts
+│   ├── supabase.ts
+│   └── utils.ts
+├── tests/
+│   ├── hooks/
+│   │   └── useAuth.test.ts
+├── utils/
+│   ├── supabase/
+│   │   ├── client.ts
+│   │   ├── middleware.ts
+│   │   └── server.ts
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── .nvmrc
+├── AGENTS.md
+├── Dockerfile
+├── README.md
+├── components.json
+├── eslint.config.mjs
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── playwright.config.ts
+├── proxy.ts
+├── tsconfig.json
+├── vitest.config.ts
+└── vitest.setup.ts
 ```
-
-The current API has root/health and auth routes. The current schema has only
-`users`, `profiles`, `groups`, and `user_groups` (in addition to Supabase's
-managed `auth.users`). There is no chat endpoint, document/ACL model,
-PermissionService, SecureRetriever, RAG service, BM25/vector adapter, or
-retrieval-stage test suite yet. The proposed design below must not be used as
-an inventory of implemented code.
 
 ---
 
-## 1. Target Architecture Overview (planned)
+## 1. Target Architecture Overview (Planned)
 
 The repository is organized around a clear separation of responsibilities:
 
@@ -92,10 +147,10 @@ Vector DB (searchable projection)
 
 Two repositories (sponsor decision, October 2026):
 
-- **Backend repo:** `project-14-knowledge-platform` (this repo — FastAPI + Supabase + Pinecone, Docker)
-- **Frontend repo:** `project-14-frontend` (Next.js + shadcn/ui, Vercel — link once created)
+- **Frontend repo:** `project-14-knowledge-platform-frontend` (this repo — Next.js + shadcn/ui, Vercel)
+- **Backend repo:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) (FastAPI + Supabase + Pinecone, Docker)
 
-Backend repo layout:
+Backend Repository Layout:
 
 ```text
 project-14-knowledge-platform/
@@ -275,10 +330,12 @@ project-14-knowledge-platform/
 │   (No requirements.txt — deps live in root pyproject.toml + uv.lock.
 │    See DATABASE_MIGRATIONS.md §4 for the dependency rules.)
 │
-│   (No frontend/ here — the UI lives in the separate frontend repo,
-│    project-14-frontend, deployed to Vercel. Its expected layout:)
-│
-├── [project-14-frontend/]                ← SEPARATE REPO (Next.js + shadcn/ui)
+```
+
+Frontend Repository Layout:
+
+```text
+├── project-14-knowledge-platform-frontend/                ← (Next.js + shadcn/ui)
 │   ├── app/                              ← Next.js App Router
 │   │   ├── login/page.tsx                ← Login via Supabase Auth (Phase 1)
 │   │   ├── chat/page.tsx                 ← Chat + chunks/citations (Phases 3, 5)
@@ -379,28 +436,15 @@ project-14-knowledge-platform/
 
 | Folder                            | Purpose                                                    |
 | --------------------------------- | ---------------------------------------------------------- |
-| `.github/workflows/`              | CI/CD — tests, evaluation, security gates                  |
-| `app/api/`                | HTTP endpoints — auth, chat, admin, health, webhooks       |
-| `app/core/`               | Core components — PermissionService (+ `Principal`), audit, security |
-| `app/models/`             | SQLAlchemy models for 8 Supabase tables                |
-| `app/schemas/`            | Pydantic schemas for API validation                        |
-| `app/db/`                 | Database session, base class, seed data                    |
-| `app/services/ingestion/` | Source connectors, chunking, ACL translation               |
-| `app/services/retrieval/` | SecureRetriever, vector store, BM25, RRF, hybrid, reranker |
-| `app/services/rag/`       | LangGraph orchestration and nodes                          |
-| `app/services/freshness/` | Freshness policy and evaluator                             |
-| `app/services/conflict/`  | Conflict detection, claim extraction, classification       |
-| `app/services/sync/`      | Projection sync and permission sync                        |
-| `app/evaluation/`         | Evaluation harness — separate from runtime                 |
-| `app/jobs/`               | Background jobs — permission sync, reindex                 |
-| `tests/unit/`             | Unit tests                                                 |
-| `tests/integration/`      | Integration tests                                          |
-| `tests/security/`         | Security-critical tests — leakage, revocation, fail-closed |
-| `migrations/`             | Alembic database migrations                                |
-| `frontend repo` (`project-14-frontend`) | Next.js + shadcn/ui application (separate repo, Vercel) |
-| `data/`                           | Golden dataset (`data/evaluation/golden_dataset.json`), fixtures, sample sources |
-| `docs/`                           | Planning, architecture, security, retrieval, evaluation docs (see `START_HERE.md`) |
-| `scripts/`                        | Utility scripts for setup, seeding, evaluation             |
+| `.github/workflows/`              | CI/CD workflows; PR source branch verification                  |
+| `app/`                | Next.js App Router pages and layouts for chat, admin, dashboard, login, and signup       |
+| `components/`               | Reusable UI primitives (`components/ui/`) and feature-specific components |
+| `docs/`             | Comprehensive project documentation across architecture, security, retrieval, and planning                |
+| `e2e/`             | End-to-end testing suite                |
+| `hooks/`             | Custom React hooks for managing application state and session lifecycles                |
+| `lib/`             | Core client libraries, API connectors, and utility wrappers                |
+| `tests/`             | Unit and component tests for hooks and frontend logic                |
+| `utils/`             | Supabase-specific helpers and client/server middleware utilities                |
 
 ---
 
@@ -408,256 +452,89 @@ project-14-knowledge-platform/
 
 |   # | Decision                                             | Reason                                            |
 | --: | ---------------------------------------------------- | ------------------------------------------------- |
-|   1 | `secure_retriever.py` lives in `services/retrieval/` | It's a retrieval boundary, not generic core       |
-|   2 | `document_acl.py` is separate from `document.py`     | ACL is a core requirement — deserves its own file |
-|   3 | `ingestion/connectors/` is a subfolder               | Cleaner when multiple sources are added           |
-|   4 | `refuse.py` is a first-class RAG node                | Calibrated refusal is a major sponsor requirement |
-|   5 | `evaluation/` files are `runner.py`, `gates.py`      | Clearer names than `run.py`, `gate.py`            |
-|   6 | `data/` is at repository root                        | Separates test data from application code         |
-|   7 | `alembic.ini` is at the repo root                | Required for Alembic migrations                   |
-|   8 | `jobs/` has 3 files (`sync_permissions.py`, `sync_sources.py`, `reindex.py`) | Permission sync, source sync, and reindex coverage |
-|   9 | `frontend/components/auth/` exists                   | Natural home for auth UI                          |
-|  10 | `.env.example` at root                               | Standard for Docker Compose                       |
-|  11 | `admin.py` uses same auth infrastructure             | No admin bypass — admin is a role, not a bypass   |
+|   1 | Supabase client utilities reside in `utils/supabase/` | Ensures clean isolation between client, server, and middleware auth contexts       |
+|   2 | `app/` uses the Next.js App Router     | Organizes distinct application domains and layout boundaries natively |
+|   3 | Authentication state is managed via `hooks/useAuth.ts`               | Centralizes session state and protected route logic for the client           |
+|   4 | End-to-end tests live in `e2e/` (e.g., Playwright)                | Separates automated UI testing from unit tests and component hooks |
+|   5 | `.github/workflows/` includes `verify-pr-source.yml`      | Enforces branch governance and deployment pipeline checks            |
+|   6 | API client wrappers are centralized under `lib/`                        | Simplifies communication with the backend service layer         |
+|   7 | Protected components and auth UI live under `components/auth/`                | Provides a natural, modular home for login and user-switching features                   |
+|   8 | `.env.example` at root | Defines required environment variables |
+|   9 | Tailwind configuration and `globals.css` are at root                   | Standardizes styling, layout tokens, and design variables globally                          |
 
 ---
 
-## 5. The Security Boundary Rule
+## 5. The CI Workflow Separation
 
-This rule must appear at the top of the README:
-
-> **Security Boundary**
->
-> All document retrieval must pass through `SecureRetriever`. Direct calls to the vector database or BM25 search implementations from API endpoints, RAG nodes, or other application components are prohibited. `SecureRetriever` obtains the user's effective principals from `PermissionService` and applies authorization filters before candidate retrieval. Every subsequent retrieval stage must operate only on authorized candidates.
-
-**Code example:**
-
-```python
-# ❌ Never allowed
-vector_store.similarity_search(query)
-
-# ✅ Always required
-secure_retriever.search(auth_context, query=query)
-```
-
-If someone later writes a direct vector DB call inside any service, this rule is violated.
-
----
-
-## 6. The Dependency Direction
+The frontend repository utilizes GitHub Actions (`verify-source-pr.yml`) to enforce branch governance and ensure that pull requests targeting production adhere to established contribution pathways.
 
 ```text
-API Endpoints
-     ↓
-PermissionService  ← resolves principals
-     ↓
-SecureRetriever    ← enforces ACL
-     ↓
- ┌───┴────┐
- │        │
-Vector    BM25
- │        │
- └───┬────┘
-     ↓
-    RRF
-     ↓
-  Reranker
-     ↓
-  RAG Nodes
-     ↓
-   LLM
+PR opened targeting 'main'
+       ↓
+verify-pr-source.yml
+       ↓
+Validates branch:
+HEAD_REF == 'dev' OR hotfix/*
+       ↓
+┌──────┴──────┐
+│             │
+▼             ▼
+ Pass        Fail
+(Merge OK)  (Blocked)
 ```
 
-**Never:**
-
-```text
-VectorStore → PermissionService
-BM25 → PermissionService
-Reranker → PermissionService
-```
-
-Authorization happens **once**, at the `SecureRetriever` boundary. Everything downstream works on already-authorized candidates.
+| Workflow | Trigger | Purpose | Target Behavior |
+| --- | --- | --- | --- |
+| `verify-pr-source.yml` | Pull requests and pushes targeting `main` | Enforces that direct updates to production originate exclusively from `dev` or `hotfix/*` branches | Required merge gate |
 
 ---
 
-## 7. What Each Layer Owns
-
-| Layer                     | Owns                 | Does NOT Own     |
-| ------------------------- | -------------------- | ---------------- |
-| API                       | HTTP, validation     | Business logic   |
-| PermissionService         | Principal resolution | Retrieval        |
-| SecureRetriever           | ACL enforcement      | Ranking          |
-| Retrieval implementations | Search mechanics     | Authorization    |
-| RAG nodes                 | Orchestration        | Domain logic     |
-| Freshness / Conflict      | Domain logic         | LangGraph state  |
-| Evaluation harness        | Measurement          | Runtime behavior |
-
----
-
-## 8. The CI Workflow Separation
-
-The current workflows are smaller than the target design shown here:
-
-- `test.yml` runs pytest while excluding `tests/security`.
-- `security.yml` runs `tests/security` (currently a placeholder test) and
-  `app.evaluation.gates`; the gate currently prints a placeholder PASS and
-  always returns success, so it does **not** enforce zero leakage.
-- `evaluation.yml` runs a placeholder that writes
-  `reports/evaluation-report.md`.
-- `docker-build.yml` builds the image when backend-related paths change.
-
-The diagram and table below describe the intended CI capabilities, not current
-test coverage or enforced merge gates.
-
-```text
-PR opened
-    ↓
-┌──────────────┬─────────────────┬──────────────────┐
-│              │                 │                  │
-test.yml    evaluation.yml   security.yml
-│              │                 │
-Unit +         Golden           ZERO LEAKAGE
-integration    dataset          required
-tests          metrics
-│              │                 │
-└──────┬───────┴────────┬────────┘
-       │                │
-       ▼                ▼
-   Report only      Merge gate
-```
-
-| Workflow | Intended contents | Target merge behavior |
-| --- | --- | --- |
-| `test.yml` | Unit and integration tests | Required |
-| `security.yml` | Leakage, ACL invariant, fail-closed, revocation, and prompt-injection tests | Required after real tests/gate are implemented |
-| `evaluation.yml` | Golden dataset and quality metrics | Informational until thresholds are validated |
-| `docker-build.yml` | Backend image build | Required when relevant paths change |
-
----
-
-## 9. Target Docker Compose Setup (not current)
-
-The checked-in `docker-compose.yml` only defines the build, port mapping, and
-restart policy. It does not pass environment variables into the container.
-The configuration below is a proposed example, not the checked-in Compose
-configuration. Supply all required settings to the container before running
-the app; host `.env` values are not automatically loaded inside the image.
-
-```yaml
-services:
-  backend:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
-      SUPABASE_DB_URL: ${SUPABASE_DB_URL}
-      PINECONE_API_KEY: ${PINECONE_API_KEY}
-      PINECONE_INDEX: ${PINECONE_INDEX}
-      LLM_PROVIDER: ${LLM_PROVIDER}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-```
-
-The target remains backend-only: no database container (Supabase is hosted)
-and no frontend service (the Next.js app is maintained separately). Supabase
-Postgres/Auth are external services; the backend connects through
-`SUPABASE_DB_URL`.
-
----
-
-## 10. Suggested Environment Template (not currently checked in)
+## 6. Suggested Environment Template
 
 ```bash
 # Supabase
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-SUPABASE_DB_URL=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
-# Pinecone
-PINECONE_API_KEY=
-PINECONE_INDEX=project-14-knowledge
-
-# LLM (provider-agnostic: OpenAI, Anthropic, Gemini)
-LLM_PROVIDER=openai
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
-GOOGLE_API_KEY=
+# Local FastAPI Backend
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-**Rule:** `.env` must be in `.gitignore`. Never commit secrets.
+**Rule:** `.env.local` must be in `.gitignore`. Never commit secrets.
 
 ---
 
-## 11. Implementation Order (8 Weeks)
-
-| Week | Focus                | Deliverable                              |
-| ---: | -------------------- | ---------------------------------------- |
-|    1 | Foundation           | FastAPI + Supabase Auth + profiles       |
-|    2 | Documents & ACL      | Document models + PermissionService      |
-|    3 | Secure Retrieval     | SecureRetriever + first security test    |
-|    4 | Ingestion            | Chunking + ACL translator + connector #1 |
-|    5 | RAG Pipeline         | LangGraph + hybrid retrieval + reranker  |
-|    6 | Freshness + Conflict | Domain logic + RAG nodes                 |
-|    7 | Evaluation Harness   | Golden dataset + metrics + CI gates      |
-|    8 | Delivery + Demo      | Demo-ready app + video + docs            |
-
-> Frontend is built alongside every phase (see `BUILD_PLAN.md`); Week 8 is delivery/polish, not the first UI.
-
----
-
-## 12. The Critical Rules to Enforce
+## 7. The Critical Rules to Enforce
 
 |   # | Rule                                                            | Enforcement                              |
 | --: | --------------------------------------------------------------- | ---------------------------------------- |
-|   1 | No generic vector search may bypass `SecureRetriever`           | Code review + lint rule                  |
-|   2 | Every retrieval stage must be a subset of authorized chunks     | Security tests                           |
-|   3 | ACL revocation propagation is a security-critical path          | Regression test (T0 → T1 → T2)           |
-|   4 | The vector DB is never the authorization authority              | Documented; Supabase is authoritative    |
-|   5 | If `PermissionService` fails, retrieval fails closed            | Error handling test                      |
-|   6 | No admin bypass — admin is a role, not a bypass                 | Same auth infrastructure used everywhere |
-|   7 | Never commit secrets                                            | `.env` in `.gitignore`                   |
-|   8 | Evaluation harness observes the pipeline — it is not part of it | Directory separation                     |
+|   1 | Never commit secrets                                            | `.env` and `.env.local` in `.gitignore`                   |
+|   2 | All browser-accessible Supabase variables must use the `NEXT_PUBLIC_` prefix | Code review + linting                     |
+|   3 | Protected routes must validate the session state before rendering sensitive UI | Middleware + `ProtectedRoute` wrapper                     |
 
 ---
 
 ## Final Repository Principle
 
-The repository structure is not merely organizational. It encodes the system's security model.
+The frontend repository structure is not merely organizational; it encodes the presentation layer's secure interaction boundaries with Supabase Auth and the FastAPI backend service.
 
-The most important architectural boundary is:
+The primary architectural boundary is:
 
 ```text
                     ┌──────────────────────────────┐
-                    │      PermissionService       │
-                    │  Resolve effective principals│
+                    │      Supabase Auth / UI      │
+                    │  Session & Protected Routes  │
                     └──────────────┬───────────────┘
                                    ↓
                     ┌──────────────────────────────┐
-                    │       SecureRetriever        │
-                    │       ENFORCE ACL HERE       │
+                    │       API Client (lib/)      │
+                    │  Attach Bearer Tokens / Auth │
                     └──────────────┬───────────────┘
                                    ↓
-             ┌─────────────────────┴─────────────────────┐
-             ↓                                           ↓
-       Vector Search                                  BM25 Search
-             └─────────────────────┬─────────────────────┘
-                                   ↓
-                                  RRF
-                                   ↓
-                               Reranker
-                                   ↓
-                            Authorized Evidence
-                                   ↓
-                       Freshness / Conflict / Evidence
-                                   ↓
-                             Generate / Refuse
-                                   ↓
-                                Verify
+                    ┌──────────────────────────────┐
+                    │    FastAPI Backend Service   │
+                    │  SecureRetriever / RAG Core  │
+                    └──────────────────────────────┘
 ```
 
-If the team preserves this dependency direction, keeps Supabase authoritative, and prevents retrieval from bypassing `SecureRetriever`, the repository structure directly reinforces the project's central permission-aware design.
+If the team maintains clean component boundaries, securely manages session tokens via Supabase utilities, and routes all data fetching through the centralized API client, the frontend structure directly reinforces the secure, decoupled user experience.

@@ -4,7 +4,7 @@
 
 **Date:** November 14, 2026 (Last Modified)
 
-**Purpose:** Complete repository structure for the project, reflecting the two-database architecture, the security boundary rule, and the eight-week implementation roadmap.
+**Purpose:** Complete repository structure for the project, accurately reflecting the two-database architecture.
 
 ## Current Implementation Snapshot
 
@@ -149,6 +149,137 @@ Two repositories (sponsor decision, October 2026):
 
 - **Frontend repo:** `project-14-knowledge-platform-frontend` (this repo — Next.js + shadcn/ui, Vercel)
 - **Backend repo:** [`project-14-knowledge-platform`](https://github.com/lanaghanim/project-14-knowledge-platform) (FastAPI + Supabase + Pinecone, Docker)
+
+Frontend Repository Layout:
+
+```text
+project-14-knowledge-platform-frontend/                ← (Next.js + shadcn/ui)
+├── .github/
+│   ├── workflows/
+│   │   └── verify-pr-source.yml
+│   └── pull_request_template.md
+├── app/                              ← Next.js App Router
+│   ├── admin/                ← Documents, ACLs, sync, metrics (Phases 2, 4, 7)
+│   │   └── users/
+│   │       └── page.tsx
+│   ├── chat/
+│   │   └── page.tsx                 ← Chat + chunks/citations (Phases 3, 5)
+│   ├── dashboard/
+│   │   └── page.tsx
+│   ├── login/                ← Login via Supabase Auth (Phase 1)
+│   │   ├── actions.ts
+│   │   └── page.tsx
+│   ├── signup/
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/                           ← shadcn/ui
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   └── label.tsx
+│   ├── chat/
+│   │   ├── ChatInput.tsx             ← Query input (Phase 3)
+│   │   ├── MessageList.tsx           ← Message list (Phase 3)
+│   │   ├── ChunkCard.tsx             ← Retrieved chunk display (Phase 3)
+│   │   ├── MessageBubble.tsx
+│   │   ├── CitationLink.tsx          ← Clickable citation (Phase 5)
+│   │   ├── SourcePanel.tsx           ← Source side panel (Phase 5)
+│   │   ├── RefusalMessage.tsx        ← Refusal display (Phase 5)
+│   │   ├── FreshnessWarning.tsx      ← Freshness banner + badge (Phase 6)
+│   │   ├── FreshnessBadge.tsx
+│   │   └── ConflictNotice.tsx        ← Conflict display (Phase 6)
+│   ├── admin/
+│   │   ├── DocumentList.tsx          ← Document table (Phase 2)
+│   │   ├── PermissionMatrix.tsx      ← ACL matrix (Phase 2)
+│   │   ├── SourceList.tsx            ← Ingestion sources (Phase 4)
+│   │   ├── SyncButton.tsx
+│   │   ├── SyncStatus.tsx
+│   │   ├── AuditLog.tsx              ← Query history (Phase 7)
+│   │   ├── MetricsDashboard.tsx      ← Evaluation scores (Phase 7)
+│   │   └── LeakGauge.tsx             ← 0% leakage gauge (Phase 7)
+│   └── auth/
+│       ├── UserSwitcher.tsx          ← Switch test users (Phase 3)
+│       └── ProtectedRoute.tsx        ← Redirect if not logged in (Phase 1)
+├── data/                               ← Test data
+│   ├── evaluation/
+│   │   └── golden_dataset.json
+│   ├── fixtures/
+│   │   ├── mock_users.json
+│   │   └── mock_documents.json
+│   └── sample_sources/
+│       ├── google_drive/
+│       └── discord/
+├── docs/                               ← Documentation (actual layout)
+│   ├── START_HERE.md                 ← Navigation hub
+│   ├── planning/
+│   │   ├── BUILD_PLAN.md
+│   │   ├── SCRUM_GUIDE.md
+│   │   ├── TAIGA_SETUP.md
+│   │   └── PULL_REQUEST_PROCESS.md
+│   ├── architecture/
+│   │   ├── REPOSITORY_STRUCTURE.md    ← This file (canonical structure)
+│   │   ├── DATABASE_MODEL.md          ← Schema overview
+│   │   ├── DATABASE_MIGRATIONS.md     ← Migration guide notes
+│   │   └── DATABASE_QUERIES.md        ← Query patterns
+│   ├── security/
+│   │   ├── PERMISSION_AWARE_RETRIEVAL.md
+│   │   └── CALIBRATED_REFUSAL.md
+│   ├── retrieval/
+│   │   ├── RETRIEVAL_QUALITY.md
+│   │   ├── FRESHNESS_STALENESS_DETECTION.md
+│   │   └── CONFLICT_DETECTION.md
+│   ├── evaluation/
+│   │   └── EVALUATION_HARNESS.md
+│   └── research/
+│       ├── ci-docker-build.md
+│       ├── hosting-options.md            ← Backend hosting comparison
+│       ├── nextjs-tutorial-summary-ahmed.md
+│       └── nextjs-tutorial-summary-lana.md
+├── e2e/
+│   └── auth.spec.ts
+├── hooks/
+│   ├── useAuth.ts                    ← Supabase Auth session (Phase 1)
+│   ├── useChat.ts
+│   └── useAudit.ts
+├── lib/
+│   ├── api.ts                        ← Backend client (Phase 1)
+│   ├── supabase.ts                   ← Supabase browser client (Phase 1)
+│   └── utils.ts
+├── scripts/                            ← Utility scripts
+│   ├── seed_db.py
+│   ├── ingest_sample_sources.py
+│   ├── run_evaluation.py
+│   └── generate_diagrams.py
+├── tests/
+│   └── hooks/
+│       └── useAuth.test.ts
+├── utils/
+│   └── supabase/
+│       ├── client.ts
+│       ├── middleware.ts
+│       └── server.ts
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── .nvmrc
+├── AGENTS.md
+├── README.md
+├── components.json
+├── eslint.config.mjs
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── playwright.config.ts
+├── proxy.ts
+├── tsconfig.json
+├── vitest.config.ts
+└── vitest.setup.ts
+```
 
 Backend Repository Layout:
 
@@ -330,104 +461,6 @@ project-14-knowledge-platform/
 │   (No requirements.txt — deps live in root pyproject.toml + uv.lock.
 │    See DATABASE_MIGRATIONS.md §4 for the dependency rules.)
 │
-```
-
-Frontend Repository Layout:
-
-```text
-├── project-14-knowledge-platform-frontend/                ← (Next.js + shadcn/ui)
-│   ├── app/                              ← Next.js App Router
-│   │   ├── login/page.tsx                ← Login via Supabase Auth (Phase 1)
-│   │   ├── chat/page.tsx                 ← Chat + chunks/citations (Phases 3, 5)
-│   │   └── admin/page.tsx                ← Documents, ACLs, sync, metrics (Phases 2, 4, 7)
-│   ├── components/
-│   │   ├── ui/                           ← shadcn/ui
-│   │   ├── chat/
-│   │   │   ├── ChatInput.tsx             ← Query input (Phase 3)
-│   │   │   ├── MessageList.tsx           ← Message list (Phase 3)
-│   │   │   ├── ChunkCard.tsx             ← Retrieved chunk display (Phase 3)
-│   │   │   ├── MessageBubble.tsx
-│   │   │   ├── CitationLink.tsx          ← Clickable citation (Phase 5)
-│   │   │   ├── SourcePanel.tsx           ← Source side panel (Phase 5)
-│   │   │   ├── RefusalMessage.tsx        ← Refusal display (Phase 5)
-│   │   │   ├── FreshnessWarning.tsx      ← Freshness banner + badge (Phase 6)
-│   │   │   ├── FreshnessBadge.tsx
-│   │   │   └── ConflictNotice.tsx        ← Conflict display (Phase 6)
-│   │   ├── admin/
-│   │   │   ├── DocumentList.tsx          ← Document table (Phase 2)
-│   │   │   ├── PermissionMatrix.tsx      ← ACL matrix (Phase 2)
-│   │   │   ├── SourceList.tsx            ← Ingestion sources (Phase 4)
-│   │   │   ├── SyncButton.tsx + SyncStatus.tsx
-│   │   │   ├── AuditLog.tsx              ← Query history (Phase 7)
-│   │   │   ├── MetricsDashboard.tsx      ← Evaluation scores (Phase 7)
-│   │   │   └── LeakGauge.tsx             ← 0% leakage gauge (Phase 7)
-│   │   └── auth/
-│   │       ├── UserSwitcher.tsx          ← Switch test users (Phase 3)
-│   │       └── ProtectedRoute.tsx        ← Redirect if not logged in (Phase 1)
-│   ├── hooks/
-│   │   ├── useAuth.ts                    ← Supabase Auth session (Phase 1)
-│   │   ├── useChat.ts
-│   │   └── useAudit.ts
-│   ├── lib/
-│   │   ├── api.ts                        ← Backend client (Phase 1)
-│   │   ├── supabase.ts                   ← Supabase browser client (Phase 1)
-│   │   └── utils.ts
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── next.config.ts
-│   ├── components.json
-│   └── .env.example                      ← NEXT_PUBLIC_SUPABASE_URL/KEY, BACKEND_URL
-│
-├── data/                               ← Test data (outside backend)
-│   ├── evaluation/
-│   │   └── golden_dataset.json
-│   ├── fixtures/
-│   │   ├── mock_users.json
-│   │   └── mock_documents.json
-│   └── sample_sources/
-│       ├── google_drive/
-│       └── discord/
-│
-├── docs/                               ← Documentation (actual layout)
-│   ├── START_HERE.md                 ← Navigation hub
-│   ├── planning/
-│   │   ├── BUILD_PLAN.md
-│   │   ├── SCRUM_GUIDE.md
-│   │   ├── TAIGA_SETUP.md
-│   │   └── PULL_REQUEST_PROCESS.md
-│   ├── architecture/
-│   │   ├── REPOSITORY_STRUCTURE.md   ← This file (canonical structure)
-│   │   ├── DATABASE_MODEL.md         ← Schema (what)
-│   │   ├── DATABASE_MIGRATIONS.md    ← Async Alembic guide (how to change it)
-│   │   └── DATABASE_QUERIES.md       ← Async query patterns (how to read/write it)
-│   ├── security/
-│   │   ├── PERMISSION_AWARE_RETRIEVAL.md
-│   │   └── CALIBRATED_REFUSAL.md
-│   ├── retrieval/
-│   │   ├── RETRIEVAL_QUALITY.md
-│   │   ├── FRESHNESS_STALENESS_DETECTION.md
-│   │   └── CONFLICT_DETECTION.md
-│   └── evaluation/
-│       └── EVALUATION_HARNESS.md
-│   ├── research/
-│   │   └── hosting-options.md            ← Backend hosting comparison (Railway primary)
-│
-├── scripts/                            ← Utility scripts
-│   ├── seed_db.py
-│   ├── ingest_sample_sources.py
-│   ├── run_evaluation.py
-│   └── generate_diagrams.py
-│
-├── Dockerfile                        ← Backend image (builds from repo root)
-├── docker-compose.yml
-├── docker-compose.test.yml
-├── .env.example
-├── .dockerignore
-├── .gitignore
-├── pyproject.toml
-├── uv.lock
-├── README.md
-└── LICENSE
 ```
 
 ---

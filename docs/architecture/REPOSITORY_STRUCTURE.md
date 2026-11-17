@@ -19,7 +19,9 @@ project-14-knowledge-platform-frontend/
 │   └── pull_request_template.md
 ├── app/
 │   ├── admin/
-│   │   └── users/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── users/
 │   │   │   └── page.tsx
 │   ├── chat/
 │   │   └── page.tsx
@@ -35,6 +37,10 @@ project-14-knowledge-platform-frontend/
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
+│   ├── admin/
+│   │   ├── AuditLog.tsx
+│   │   ├── DocumentList.tsx
+│   │   └── MetricsDashboard.tsx
 │   ├── ui/
 │   │   ├── button.tsx
 │   │   ├── card.tsx
@@ -160,8 +166,10 @@ project-14-knowledge-platform-frontend/                ← (Next.js + shadcn/ui)
 │   └── pull_request_template.md
 ├── app/                              ← Next.js App Router
 │   ├── admin/                ← Documents, ACLs, sync, metrics (Phases 2, 4, 7)
-│   │   └── users/
-│   │       └── page.tsx
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── users/
+│   │   │   └── page.tsx
 │   ├── chat/
 │   │   └── page.tsx                 ← Chat + chunks/citations (Phases 3, 5)
 │   ├── dashboard/

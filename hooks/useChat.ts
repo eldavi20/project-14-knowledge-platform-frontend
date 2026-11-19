@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createSessionId, sendChatMessage } from '@/lib/chat';
 import type { ChatMessage } from '@/types/chat';
 
@@ -11,16 +11,25 @@ export interface UseChatOptions {
 export function useChat(options?: UseChatOptions) {
   const initialTopK = options?.initialTopK;
 
-  const [sessionId, setSessionId] = useState<string>(() => createSessionId());
+  const [sessionId, setSessionId] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSessionId((prev) => prev || createSessionId());
+  }, []);
 
   const sendMessage = useCallback(
     async (content: string): Promise<void> => {
       const trimmed = content.trim();
       if (trimmed.length === 0) {
         return;
+      }
+
+      const activeSessionId = sessionId || createSessionId();
+      if (!sessionId) {
+        setSessionId(activeSessionId);
       }
 
       const userMessage: ChatMessage = {
@@ -36,7 +45,7 @@ export function useChat(options?: UseChatOptions) {
 
       try {
         const response = await sendChatMessage({
-          session_id: sessionId,
+          session_id: activeSessionId,
           content: trimmed,
           ...(initialTopK !== undefined ? { top_k: initialTopK } : {}),
         });

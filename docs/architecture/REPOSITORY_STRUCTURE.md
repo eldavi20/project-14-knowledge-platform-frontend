@@ -1,8 +1,8 @@
 # Current and Target Repository Structure — Permission-Aware Knowledge Agent
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+**Project:** SER 401 — Project 14: Permission-Aware Knowledge Agent
 
-**Date:** November 14, 2026 (Last Modified)
+**Date:** November 20, 2026 (Last Modified)
 
 **Purpose:** Complete repository structure for the project, accurately reflecting the two-database architecture.
 
@@ -499,15 +499,15 @@ project-14-knowledge-platform/
 |   4 | End-to-end tests live in `e2e/` (e.g., Playwright)                | Separates automated UI testing from unit tests and component hooks |
 |   5 | `.github/workflows/` includes `verify-pr-source.yml`      | Enforces branch governance and deployment pipeline checks            |
 |   6 | API client wrappers are centralized under `lib/`                        | Simplifies communication with the backend service layer         |
-|   7 | Protected components and auth UI live under `components/auth/`                | Provides a natural, modular home for login and user-switching features                   |
+|   7 | Session state and protected-route helpers live in `hooks/useAuth.ts` | Keeps client authentication state in one reusable module |
 |   8 | `.env.example` at root | Defines required environment variables |
-|   9 | Tailwind configuration and `globals.css` are at root                   | Standardizes styling, layout tokens, and design variables globally                          |
+|   9 | Tailwind CSS v4 is configured through the Next.js pipeline; global styles live in `app/globals.css` | Keeps design tokens and global styles in the App Router |
 
 ---
 
 ## 5. The CI Workflow Separation
 
-The frontend repository utilizes GitHub Actions (`verify-source-pr.yml`) to enforce branch governance and ensure that pull requests targeting production adhere to established contribution pathways.
+The frontend repository uses GitHub Actions (`verify-pr-source.yml`) to enforce branch governance and ensure that pull requests targeting production adhere to established contribution pathways.
 
 ```text
 PR opened targeting 'main'
@@ -564,7 +564,7 @@ The primary architectural boundary is:
 ```text
                     ┌──────────────────────────────┐
                     │      Supabase Auth / UI      │
-                    │  Session & Protected Routes  │
+                    │ Session and Protected Routes │
                     └──────────────┬───────────────┘
                                    ↓
                     ┌──────────────────────────────┐

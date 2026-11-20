@@ -94,12 +94,11 @@ export function UserSwitcher({ onUserSwitch, className }: UserSwitcherProps) {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-
     if (!user) {
-      setProfile(null);
       return;
     }
+
+    let cancelled = false;
 
     const load = async () => {
       setProfileLoading(true);
@@ -164,8 +163,9 @@ export function UserSwitcher({ onUserSwitch, className }: UserSwitcherProps) {
     void switchToUser(email, password);
   };
 
-  const activeEmail = profile?.email ?? user?.email ?? null;
-  const displayName = profile?.full_name || profile?.username || activeEmail;
+  const activeProfile = user ? profile : null;
+  const activeEmail = activeProfile?.email ?? user?.email ?? null;
+  const displayName = activeProfile?.full_name || activeProfile?.username || activeEmail;
   const canSubmitForm =
     !isSwitching && email.trim().length > 0 && password.length > 0;
 
@@ -220,22 +220,22 @@ export function UserSwitcher({ onUserSwitch, className }: UserSwitcherProps) {
               aria-hidden="true"
             />
           )}
-          {profile?.department && (
+          {activeProfile?.department && (
             <span
               data-testid="active-user-department"
               className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
             >
               <Users className="size-3" aria-hidden="true" />
-              {profile.department}
+              {activeProfile.department}
             </span>
           )}
-          {profile?.access_level && (
+          {activeProfile?.access_level && (
             <span
               data-testid="active-user-access-level"
               className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
             >
               <Shield className="size-3" aria-hidden="true" />
-              {profile.access_level}
+              {activeProfile.access_level}
             </span>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChat } from '@/hooks/useChat';
 import { apiClient } from '@/lib/api';
@@ -31,12 +31,14 @@ describe('useChat', () => {
     vi.clearAllMocks();
   });
 
-  it('initializes with empty messages, non-empty sessionId, idle loading, and null error', () => {
+  it('initializes with empty messages, non-empty sessionId, idle loading, and null error', async () => {
     const { result } = renderHook(() => useChat());
 
     expect(result.current.messages).toEqual([]);
-    expect(result.current.sessionId).toBeTruthy();
-    expect(result.current.sessionId.length).toBeGreaterThan(0);
+    await waitFor(() => {
+      expect(result.current.sessionId).toBeTruthy();
+      expect(result.current.sessionId.length).toBeGreaterThan(0);
+    });
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
@@ -51,6 +53,9 @@ describe('useChat', () => {
     );
 
     const { result } = renderHook(() => useChat({ initialTopK: 4 }));
+    await waitFor(() => {
+      expect(result.current.sessionId).toBeTruthy();
+    });
     const activeSessionId = result.current.sessionId;
 
     let pendingSend: Promise<void>;
@@ -144,6 +149,9 @@ describe('useChat', () => {
     );
 
     const { result } = renderHook(() => useChat());
+    await waitFor(() => {
+      expect(result.current.sessionId).toBeTruthy();
+    });
     const initialSessionId = result.current.sessionId;
 
     await act(async () => {

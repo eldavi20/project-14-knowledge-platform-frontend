@@ -17,7 +17,10 @@ export function useChat(options?: UseChatOptions) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setSessionId((prev) => prev || createSessionId());
+    const timer = window.setTimeout(() => {
+      setSessionId((prev) => prev || createSessionId());
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const sendMessage = useCallback(

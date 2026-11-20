@@ -136,6 +136,13 @@ E2E_USER_EMAIL=test@example.com
 E2E_USER_PASSWORD=Password123!
 ```
 
+If you run the Playwright auth suite against a specific environment, you can also set:
+
+```bash
+E2E_USER_EMAIL=test@example.com
+E2E_USER_PASSWORD=Password123!
+```
+
 ---
 
 ## 6. Testing and Quality Verification

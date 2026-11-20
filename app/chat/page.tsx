@@ -34,10 +34,7 @@ export default function ChatPage() {
   };
 
   return (
-    <main
-      data-testid="chat-page"
-      className="flex min-h-screen flex-1 flex-col bg-background text-foreground"
-    >
+    <main data-testid="chat-page" className="flex min-h-screen flex-1 flex-col bg-background text-foreground">
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
         {/* Page Header */}
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">

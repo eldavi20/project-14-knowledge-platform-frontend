@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { AlertCircle, Hash, RotateCcw, ShieldCheck, X } from 'lucide-react';
 import { UserSwitcher } from '@/components/auth/UserSwitcher';
 import { ChatInput } from '@/components/chat/ChatInput';
@@ -15,7 +15,7 @@ function formatSessionSnippet(sessionId: string): string {
   return sessionId.length > 8 ? `${sessionId.slice(0, 8)}…` : sessionId;
 }
 
-export default function ChatPage() {
+function ChatPageContent() {
   const {
     sessionId,
     messages,
@@ -123,5 +123,19 @@ export default function ChatPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen flex-1 flex-col bg-background p-6 text-sm text-muted-foreground">
+          Loading chat…
+        </main>
+      }
+    >
+      <ChatPageContent />
+    </Suspense>
   );
 }

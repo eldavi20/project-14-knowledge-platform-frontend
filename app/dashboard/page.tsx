@@ -1,10 +1,13 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/app/login/actions";
 
 async function UserProfile() {
+  await connection();
+  
   const supabase = await createClient();
   const {
     data: { user },

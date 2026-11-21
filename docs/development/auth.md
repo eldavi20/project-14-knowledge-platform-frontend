@@ -1,28 +1,28 @@
-# Authentication Flow & Architecture
+# Authentication Flow and Architecture
 
-**Status:** Current as of 2 Nov 2026. This document reflects the live frontend implementation in this repo: login/logout, proxy route guards, dashboard access, and the current signup stub status.
+**Status:** Current as of 2 Nov 2026. This document reflects the live frontend implementation in this repository: login/logout, proxy route guards, dashboard access, and the current signup stub status.
 
-**Stories:** US-74 (Frontend Setup & Login) · US-105 (Employee Signup) · US-110 (Verification, Logout & Docs)<br>
+**Stories:** US-74 (Frontend Setup and Login) · US-105 (Employee Signup) · US-110 (Verification, Logout, and Documentation)<br>
 **Date:** 27 Oct 2026 · **Last verified:** 2 Nov 2026<br>
 **Purpose:** End-to-end documentation of the frontend authentication lifecycle, session management with Supabase SSR, route protection, containerization, and automated Playwright testing.
 
 ---
 
-## 1. Story Context & Inter-Story Relationships
+## 1. Story Context and Inter-Story Relationships
 
 The frontend authentication and user onboarding architecture spans three interconnected stories:
 
 ### Breakdown by User Story
 
-- **US-74 (Frontend Foundation & Login):**
+- **US-74 (Frontend Foundation and Login):**
   - Initialized Next.js App Router, shadcn/ui components, and route shells (T-75).
   - Implemented containerized production `Dockerfile` (T-76).
   - Built `/login` with React Hook Form + Zod and hooked it to Supabase SSR (`signInWithPassword`) in T-102.
   - Added edge `proxy.ts` for route protection and query parameter preservation (`?next=...`) in T-103.
-- **US-105 (Employee Onboarding & Registration):**
-  - **T-109 (Frontend, PR #6 - Merged):** Created the `/signup` page using shadcn/ui (`card`, `input`, `label`). Features client-side validation (email format, minimum 8-character password, password confirmation match), accessibility bindings (`aria-invalid`, `aria-describedby`), and a footer link back to `/login`. Submit is still a documented frontend stub; the backend `/api/auth/signup` endpoint exists but is not wired to this page yet.
-  - **T-106 / T-107 / T-108 (Backend):** Implement Supabase user registration, duplicate email handling (HTTP 409 Conflict), and automated API tests.
-- **US-110 (End-to-End Verification, Logout & Documentation):**
+- **US-105 (Employee Onboarding and Registration):**
+  - **T-109 (Frontend, PR #6 — merged):** Created the `/signup` page using shadcn/ui (`card`, `input`, `label`). Features client-side validation (email format, minimum 8-character password, password confirmation match), accessibility bindings (`aria-invalid`, `aria-describedby`), and a footer link back to `/login`. Submit is still a documented frontend stub; the backend `/api/auth/signup` endpoint exists but is not wired to this page yet.
+  - **T-106, T-107, and T-108 (Backend):** Implement Supabase user registration, duplicate email handling (HTTP 409 Conflict), and automated API tests.
+- **US-110 (End-to-End Verification, Logout, and Documentation):**
   - **T-111:** Playwright E2E automated test suite verifying unauthenticated redirects, invalid credentials, full browser login, and `/chat` deep linking.
   - **T-112:** Server action `logout()` using `supabase.auth.signOut()`, session cookie clearing, and dashboard UI button.
   - **T-113:** Complete architectural documentation and test guides (this file).
@@ -31,7 +31,7 @@ The frontend authentication and user onboarding architecture spans three interco
 
 ## 2. Key Architectural Components
 
-| Component                 | File                                             | Responsibility                                                                                                                    | Story & Task Origin   |
+| Component                 | File                                             | Responsibility                                                                                                                    | Story and Task Origin |
 | :------------------------ | :----------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
 | **Edge Proxy**            | `proxy.ts` / `utils/supabase/middleware.ts` | Intercepts requests, validates session tokens, enforces route guards, and refreshes auth tokens before rendering.                 | US-74 (T-103)         |
 | **Login Server Action**   | `app/login/actions.ts` (`login`)                 | Authenticates user via `signInWithPassword`, sets HTTP-only cookies, and safely redirects.                                        | US-74 (T-102)         |
@@ -48,10 +48,10 @@ The frontend authentication and user onboarding architecture spans three interco
 
 ## 3. End-to-End Sequence Diagrams
 
-### Diagram 1: Unauthenticated Route Guard & Deep Linking
+### Diagram 1: Unauthenticated Route Guard and Deep Linking
 
 ```text
-Browser / User                     Next.js Middleware                  /login Page
+Browser / User                     Next.js Proxy                       /login Page
       │                                    │                                │
    1. │ ─── GET /dashboard (no cookies) ─▶ │                                │
       │                                    │ 2. Check cookies:              │
@@ -62,7 +62,7 @@ Browser / User                     Next.js Middleware                  /login Pa
       │ ◀── Render Login Form with ?next preserved ──────────────────────── │
 ```
 
-### Diagram 2: Login & Session Establishment
+### Diagram 2: Login and Session Establishment
 
 ```text
 User / Browser               /login Page           login() Server Action      Supabase Auth Server       /dashboard
@@ -81,13 +81,13 @@ User / Browser               /login Page           login() Server Action      Su
    6. │ ── GET /dashboard (with auth cookies) ──────────────────────────────────────────────────────────────▶ │
       │                                                                                │                      │ 7. getUser()
       │                                                                                │ ◀── User Data ────── │
-   8. │ ◀── Render Dashboard with user email & role ("authenticated") ─────────────────────────────────────── │
+   8. │ ◀── Render Dashboard with user email and role ("authenticated") ─────────────────────────────────────── │
 ```
 
-### Diagram 3: Logout & Session Invalidation
+### Diagram 3: Logout and Session Invalidation
 
 ```text
-User / Browser               /dashboard            logout() Server Action     Supabase Auth Server       Middleware / Login
+User / Browser               /dashboard            logout() Server Action     Supabase Auth Server       Proxy / Login
       │                           │                         │                          │                          │
    1. │ ── Click "Log out" ─────▶ │ ── POST Server Action ─▶│                          │                          │
       │                           │    logout()             │                          │                          │
@@ -113,7 +113,7 @@ User / Browser               /dashboard            logout() Server Action     Su
 | `/`          | Public       | Allowed (renders landing page with "Log in" and "Dashboard" buttons) | Allowed                                           | Active                                                               |
 | `/login`     | Guest Only   | Allowed (renders sign-in form)                                       | Redirects to `/dashboard`                         | Active (US-74 T-102)                                                 |
 | `/signup`    | Guest Only   | Allowed (client validation active; submit is stubbed)                | Redirects to `/dashboard`                         | Frontend merged (PR #6 / T-109); backend `/api/auth/signup` exists, frontend wiring pending |
-| `/dashboard` | Protected    | Redirects to `/login?next=/dashboard`                                | Allowed (displays user profile & Log out button)  | Active (US-110 T-111, T-112)                                         |
+| `/dashboard` | Protected    | Redirects to `/login?next=/dashboard`                                | Allowed (displays user profile and Log out button)  | Active (US-110 T-111, T-112)                                         |
 | `/chat`      | Protected    | Redirects to `/login?next=/chat`                                     | Allowed                                           | Active page shell (T-75)                                             |
 | `/admin/*`   | Protected    | Redirects to `/login?next=/admin/...`                                | Allowed (pending RBAC role check in future story) | Page shell (T-75)                                                    |
 
@@ -121,7 +121,7 @@ User / Browser               /dashboard            logout() Server Action     Su
 
 ## 5. Environment Variables
 
-Ensure `.env.local` in `project-14-knowledge-platform-frontend` contains:
+The local `.env.local` file in `project-14-knowledge-platform-frontend` must contain:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
@@ -136,7 +136,7 @@ E2E_USER_EMAIL=test@example.com
 E2E_USER_PASSWORD=Password123!
 ```
 
-Test credentials used by automated Playwright E2E suites:
+If you run the Playwright auth suite against a specific environment, you can also set:
 
 ```bash
 E2E_USER_EMAIL=test@example.com
@@ -145,7 +145,7 @@ E2E_USER_PASSWORD=Password123!
 
 ---
 
-## 6. Testing & Quality Verification
+## 6. Testing and Quality Verification
 
 ### Automated Playwright Tests (`e2e/auth.spec.ts`)
 
@@ -159,7 +159,7 @@ Run all end-to-end tests from `project-14-knowledge-platform-frontend`:
    ```bash
    npx playwright test --headed
    ```
-3. **Interactive UI Mode (Step-by-step debugger & DOM inspection):**
+3. **Interactive UI Mode (step-by-step debugger and DOM inspection):**
    ```bash
    npx playwright test --ui
    ```
@@ -168,9 +168,9 @@ Run all end-to-end tests from `project-14-knowledge-platform-frontend`:
 
 1. **Unauthenticated Guard:** Visiting `/dashboard` without session redirects to `/login?next=%2Fdashboard` and renders the sign-in form.
 2. **Invalid Credential Handling:** Submitting wrong credentials shows `[data-testid="auth-error-alert"]` with `"Invalid login credentials"` and preserves the login page.
-3. **Full Login & Role Display:** Opening `/` $\rightarrow$ clicking "Log in" $\rightarrow$ submitting valid credentials $\rightarrow$ redirecting to `/dashboard` $\rightarrow$ verifying `[data-testid="user-email"]` and `[data-testid="user-role"]` (`authenticated`).
+3. **Full Login and Role Display:** Opening `/` $\rightarrow$ clicking "Log in" $\rightarrow$ submitting valid credentials $\rightarrow$ redirecting to `/dashboard` $\rightarrow$ verifying `[data-testid="user-email"]` and `[data-testid="user-role"]` (`authenticated`).
 4. **Deep-Link Preservation:** Accessing `/chat` unauthenticated $\rightarrow$ redirects to `/login?next=%2Fchat` $\rightarrow$ authenticating $\rightarrow$ forwards directly to `/chat`.
-5. **Logout & Session Destruction:** Authenticating $\rightarrow$ clicking "Log out" $\rightarrow$ verifying redirect to `/login` $\rightarrow$ verifying cookies are wiped $\rightarrow$ verifying re-accessing `/dashboard` redirects to `/login?next=%2Fdashboard`.
+5. **Logout and Session Destruction:** Authenticating $\rightarrow$ clicking "Log out" $\rightarrow$ verifying redirect to `/login` $\rightarrow$ verifying cookies are wiped $\rightarrow$ verifying re-accessing `/dashboard` redirects to `/login?next=%2Fdashboard`.
 
 ---
 
@@ -185,7 +185,7 @@ Run all end-to-end tests from `project-14-knowledge-platform-frontend`:
 
 ## 8. Current Backend Integration Status
 
-The frontend and backend auth paths are not fully wired yet. Current behavior:
+The frontend and backend authentication paths are not fully integrated yet. Current behavior:
 
 | Flow | Backend | Frontend |
 | :--- | :--- | :--- |

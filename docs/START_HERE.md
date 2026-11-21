@@ -1,6 +1,6 @@
-# Start Here - Project Documentation
+# Start Here — Project Documentation
 
-**Project:** SER 401 – Project 14: Permission-Aware Knowledge Agent
+**Project:** SER 401 — Project 14: Permission-Aware Knowledge Agent
 **Repository:** `project-14-knowledge-platform-frontend`
 
 Welcome to the project documentation.
@@ -11,16 +11,18 @@ This folder contains the project's planning, architecture, security, retrieval, 
 
 ## 1. Recommended Starting Path
 
-The documentation is organized into five areas:
+The documentation is organized into seven areas:
 
 ```text
 docs/
 ├── START_HERE.md
 ├── planning/
 ├── architecture/
+├── development/
 ├── security/
 ├── retrieval/
-└── evaluation/
+├── evaluation/
+└── research/
 ```
 
 A new team member should generally read the documentation in this order:
@@ -449,7 +451,7 @@ It covers the retrieval process and the mechanisms used to improve the relevance
 
 ---
 
-## Freshness & Staleness Detection
+## Freshness and Staleness Detection
 
 **File:** [`retrieval/FRESHNESS_STALENESS_DETECTION.md`](./retrieval/FRESHNESS_STALENESS_DETECTION.md)
 
@@ -739,6 +741,7 @@ When adding new project documentation:
 5. Link related documents together.
 6. Avoid duplicating information that already exists elsewhere.
 7. Keep implementation details in the code when they do not belong in project documentation.
+8. Follow [`development/DOCUMENTATION_STYLE.md`](./development/DOCUMENTATION_STYLE.md) for naming, tone, headings, dates, and formatting.
 
 ---
 
@@ -766,8 +769,15 @@ When adding new project documentation:
 ### Retrieval
 
 - [Retrieval Quality](./retrieval/RETRIEVAL_QUALITY.md)
-- [Freshness & Staleness Detection](./retrieval/FRESHNESS_STALENESS_DETECTION.md)
+- [Freshness and Staleness Detection](./retrieval/FRESHNESS_STALENESS_DETECTION.md)
 - [Conflict Detection](./retrieval/CONFLICT_DETECTION.md)
+
+### Development
+
+- [Authentication Flow](./development/auth.md)
+- [CI Documentation](./development/ci.md)
+- [Git Workflow](./development/git-workflow.md)
+- [Documentation Style Guide](./development/DOCUMENTATION_STYLE.md)
 
 ### Evaluation
 

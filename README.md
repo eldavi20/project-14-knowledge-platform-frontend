@@ -1,10 +1,12 @@
-# Project 14 - Knowledge Platform Frontend
+# Project 14 — Knowledge Platform Frontend
+
+**SER 401 — Software Engineering Project**
 
 Frontend for the knowledge platform project. This repository is a Next.js App Router application that provides the browser interface for authentication, protected routes, and the user dashboard experience.
 
 ## Current Status
 
-This project is currently in a sprint-ready auth-and-shell phase. The repo contains the working frontend foundation for:
+This project is currently in an authentication and app-shell phase. The repository contains the working frontend foundation for:
 
 - Supabase-powered login with HTTP-only session cookies
 - Protected routes and redirect handling for authenticated users
@@ -12,7 +14,7 @@ This project is currently in a sprint-ready auth-and-shell phase. The repo conta
 - Chat and admin route shells
 - Playwright end-to-end authentication testing
 
-The following remain intentionally stubbed or pending backend hookup:
+The following remain intentionally stubbed or pending backend integration:
 
 - `/signup` submission is currently a frontend validation stub and does not yet call a registration endpoint
 - chat and admin pages are placeholder shells rather than full knowledge workflows
@@ -42,37 +44,36 @@ This repository is the browser-facing part of the platform. It is designed to:
 
 ```text
 project-14-knowledge-platform-frontend/
-├── app/                           # App Router pages and route shells
-│   ├── admin/users/page.tsx
-│   ├── chat/page.tsx
-│   ├── dashboard/page.tsx
-│   ├── login/actions.ts
-│   ├── login/page.tsx
-│   ├── page.tsx
-│   ├── signup/page.tsx
+├── app/                           # App Router pages, layouts, and server actions
+│   ├── admin/                     # Admin shell and user-management route
+│   ├── chat/                      # Chat route shell
+│   ├── dashboard/                 # Authenticated profile view
+│   ├── login/                     # Sign-in page and server actions
+│   ├── signup/                    # Signup form with pending backend wiring
 │   ├── globals.css
 │   ├── layout.tsx
-│   └── ...
-├── components/                    # Reusable UI primitives
-│   └── ui/
-├── docs/                          # Project documentation and research notes
-│   ├── development/
-│   └── research/
-├── e2e/                           # Playwright tests
-├── lib/                           # Shared utilities and API helpers
-├── public/                        # Static assets
-├── utils/supabase/                # Supabase client/server helpers
+│   └── page.tsx
+├── components/
+│   ├── admin/                     # Admin dashboard components
+│   └── ui/                        # shadcn/ui primitives
+├── docs/                          # Architecture, development, planning, and research docs
+├── e2e/                           # Playwright end-to-end tests
+├── hooks/useAuth.ts               # Shared authentication state
+├── lib/                           # API client, Supabase client, and utilities
+├── tests/hooks/                   # Vitest unit tests
+├── utils/supabase/                # Supabase client, server, and middleware helpers
 ├── .env.example                   # Local environment template
 ├── .github/pull_request_template.md
 ├── AGENTS.md
 ├── Dockerfile
-├── middleware.ts                  # Protected-route middleware
+├── proxy.ts                       # Protected-route and session-refresh proxy
 ├── next.config.ts
 ├── package.json
 ├── playwright.config.ts
 ├── README.md
 ├── tsconfig.json
-└── ...
+├── vitest.config.ts
+└── vitest.setup.ts
 ```
 
 ## Current Feature Set
@@ -88,7 +89,7 @@ project-14-knowledge-platform-frontend/
 
 ### Security behavior
 
-- middleware blocks unauthenticated users from protected pages
+- `proxy.ts` blocks unauthenticated users from protected pages
 - successful login preserves a deep-link destination through `?next=`
 - signed-out users are redirected back to `/login`
 - protected routes redirect guests to the correct login page
@@ -149,9 +150,9 @@ This covers unauthenticated route redirects, invalid credentials, successful log
 
 ## Deployment Notes
 
-This repo is intended to be deployed to Vercel. The current project is still in the frontend foundation and auth-validation stage, so deployment should be treated as a preview environment until the remaining knowledge-platform features are implemented.
+This repository is intended to be deployed to Vercel. The project is still in the frontend foundation and authentication-validation stage, so deployment should be treated as a preview environment until the remaining knowledge-platform features are implemented.
 
-## Sprint Readiness / Next Steps
+## Sprint Readiness and Next Steps
 
 The backlog for the next sprint should focus on:
 
@@ -163,8 +164,15 @@ The backlog for the next sprint should focus on:
 
 ## Pull Requests
 
-PRs should use the local template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). The template covers summary, story linkage, what changed, how to test, accessibility considerations, and reviewer checklists.
+Pull requests must use the local template at [`.github/pull_request_template.md`](./.github/pull_request_template.md). The template covers the summary, story linkage, changed files, testing, accessibility considerations, and reviewer checklist.
 
-Branch names follow `<type>/us-<story>-t-<task>-<short-description>` and commit messages follow Conventional Commits, as defined in the project's pull request process documentation.
+Branch names follow `<type>/us-<story>-t-<task>-<short-description>`, and commit messages follow Conventional Commits as defined in the project's pull request process documentation.
+
+## Documentation
+
+- [`docs/START_HERE.md`](docs/START_HERE.md) — documentation index and reading path.
+- [`docs/development/DOCUMENTATION_STYLE.md`](docs/development/DOCUMENTATION_STYLE.md) — shared backend and frontend style guide.
+- [`docs/development/auth.md`](docs/development/auth.md) — authentication flow and backend integration status.
+- [`docs/architecture/REPOSITORY_STRUCTURE.md`](docs/architecture/REPOSITORY_STRUCTURE.md) — current and target repository layout.
 
 The project is intentionally kept minimal at this stage. Additional components will be added as development progresses.
